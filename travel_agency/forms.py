@@ -7,3 +7,7 @@ class UserForm(forms.ModelForm):
 	class Meta:
 		model = User
 		fields = ['username', 'email', 'password']
+
+class SearchForm(forms.ModelForm):
+	class Meta:
+		fields = ['from_location', 'to_location', 'from_date', 'to_date', 'travelers_count']

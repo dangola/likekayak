@@ -4,15 +4,12 @@ from django.contrib.auth import authenticate, login, logout
 from django.views import generic
 from django.views.generic import View
 from .models import Destination
-from .forms import UserForm
+from .forms import UserForm, SearchForm
 
 # Create your views here.
 
 def index(request):
-    return render(request, 'travel_agency/index.html')
-
-def allusers(request):
-	return render(request, 'travel_agency/allusers.html', Destination.get_all())
+    return render(request, 'travel_agency/packages.html')
 
 def register(request):
     form = UserForm(request.POST or None)
