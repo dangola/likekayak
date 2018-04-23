@@ -17,3 +17,5 @@ class Destination(models.Model):
 		result = cursor.fetchall()[0][0]
 
 		return { 'result': result }
+
+connection.close()
