@@ -60,7 +60,11 @@ class Search(models.Model):
 	to_date = models.DateField(default=datetime.now)
 	travelers_count = models.IntegerField(validators=[MinValueValidator(1)])
 
-class Transportation(models.Model):
+class Company(models.Model):
+	company_id = models.IntegerField(primary_key=True)
+	name = models.CharField(max_length=256)
+
+class Transportation(Company):
 	transport_id = models.IntegerField(primary_key=True)
 	number = models.IntegerField()
 	carrier = models.CharField(max_length=20)
@@ -93,5 +97,29 @@ class Car(Transportation):
 
 class Cruise(Transportation):
 	cruise_id = models.IntegerField(primary_key=True)
+
+class Amenities(models.Model):
+	amenities_id = models.IntegerField(primary_key=True)
+	breakfast = models.BooleanField(default=False)
+	internet = models.BooleanField(default=False)
+	parking = models.BooleanField(default=False)
+	fitness = models.BooleanField(default=False)
+	pool = models.BooleanField(default=False)
+	bar = models.BooleanField(default=False)
+
+class Hotel(Company):
+	hotel_id = models.IntegerField(primary_key=True)
+	location = models.OneToOneField(Location, on_delete="DO_NOTHING")
+	addr = models.OneToOneField(Address, on_delete="CASCADE")
+	amenities = models.OneToOneField(Amenities, on_delete="CASCADE")
+	cost = models.IntegerField()
+
+class Review(models.Model):
+	review_id = models.IntegerField(primary_key=True)
+	company_id = models.ForeignKey(Company, on_delete="DO_NOTHING")
+	user_id = models.ForeignKey(User, on_delete="DO_NOTHING")
+	content = models.CharField(max_length=256)
+	rating = models.IntegerField()
+	date = models.DateField(default=datetime.now)
 
 connection.close()
