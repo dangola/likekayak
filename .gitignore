@@ -3,5 +3,5 @@ travel_agency/migrations/
 travel_agency/migrations/__pycache__/
 travel_agency/__pycache__/
 travel_agency/.DS_Store
-travel_agency/templatetags/__pycache__/
 desktop.ini
+travel_agency/templatetags/__pycache__/
