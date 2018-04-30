@@ -3,7 +3,7 @@ from django.shortcuts import render
 from django.contrib.auth import authenticate, login, logout
 from django.views import generic
 from django.views.generic import View
-from .forms import UserForm, SearchForm
+from .forms import *
 from .models import *
 
 # Create your views here.
@@ -80,6 +80,13 @@ def flights(request):
 
 def cars(request):
     return HttpResponse('temp')
+
+def settings(request):
+    form = SettingsForm()
+    context = {
+        'form': form,
+    }
+    return render(request, 'travel_agency/settings.html', context)
 
 def packages(request):
     if request.method == 'POST':

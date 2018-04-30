@@ -1,0 +1,65 @@
+[
+  {
+    "model": "travel_agency.Location", 
+    "pk": 1,
+    "fields": {
+      "city": "New York City",
+      "state": "New York",
+      "country": "United States of America"
+    }
+  },
+  {
+    "model": "travel_agency.Location", 
+    "pk": 2,
+    "fields": {
+      "city": "Los Angeles",
+      "state": "California",
+      "country": "United States of America"
+    }
+  },
+  {
+    "model": "travel_agency.Location", 
+    "pk": 3,
+    "fields": {
+      "city": "Boulder",
+      "state": "Colorado",
+      "country": "United States of America"
+    }
+  },
+  {
+    "model": "travel_agency.Location", 
+    "pk": 4,
+    "fields": {
+      "city": "Philadelphia",
+      "state": "Pennsylvania",
+      "country": "United States of America"
+    }
+  },
+  {
+    "model": "travel_agency.Location", 
+    "pk": 5,
+    "fields": {
+      "city": "Boston",
+      "state": "Massachusetts",
+      "country": "United States of America"
+    }
+  },
+  {
+    "model": "travel_agency.Location", 
+    "pk": 6,
+    "fields": {
+      "city": "Seattle",
+      "state": "Washington",
+      "country": "United States of America"
+    }
+  },
+  {
+    "model": "travel_agency.Location", 
+    "pk": 7,
+    "fields": {
+      "city": "Denver",
+      "state": "Colorado",
+      "country": "United States of America"
+    }
+  }
+]

@@ -1,0 +1,15 @@
+[
+  {
+    "model": "travel_agency.Profile", 
+    "pk": 1,
+    "fields": {
+      "user_id": 6,
+      "first_name": "John",
+      "last_name": "Lennon",
+      "home_addr": null,
+      "billing_addr": null,
+      "payment_method": null,
+      "email": "john.lennon@example.com"
+    }
+  }
+]

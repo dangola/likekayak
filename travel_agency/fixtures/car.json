@@ -1,0 +1,50 @@
+[
+  {
+    "model": "travel_agency.Car",
+    "pk": 0,
+    "fields": {
+      "number": 10001,
+      "company": 5,
+      "from_location": 1,
+      "to_location": 3,
+      "cost": 20,
+      "available": 3,
+      "from_date": "2018-05-20",
+      "to_date": "2018-05-25",
+      "confirmation_id": 18843,
+      "car_class": "COMMERCIAL"
+    }
+  },
+  {
+    "model": "travel_agency.Car",
+    "pk": 1,
+    "fields": {
+      "number": 10001,
+      "company": 5,
+      "from_location": 1,
+      "to_location": 3,
+      "cost": 45,
+      "available": 3,
+      "from_date": "2018-05-20",
+      "to_date": "2018-05-27",
+      "confirmation_id": 18842,
+      "car_class": "TRUCK"
+    }
+  },
+  {
+    "model": "travel_agency.Car",
+    "pk": 2,
+    "fields": {
+      "number": 10032,
+      "company": 6,
+      "from_location": 1,
+      "to_location": 3,
+      "cost": 20,
+      "available": 3,
+      "from_date": "2018-05-12",
+      "to_date": "2018-05-19",
+      "confirmation_id": 18443,
+      "car_class": "LUXURY"
+    }
+  }
+]

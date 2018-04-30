@@ -1,0 +1,152 @@
+[
+  {
+    "model": "travel_agency.Flight",
+    "pk": 0,
+    "fields": {
+      "number": 34010,
+      "company": 1,
+      "from_location": 1,
+      "to_location": 3,
+      "cost": 1102,
+      "available": 73,
+      "from_date": "2018-05-20 17:30",
+      "to_date": "2018-05-20 08:48",
+      "flight_class": "FIRST"
+    }
+  },
+  {
+    "model": "travel_agency.Flight",
+    "pk": 1,
+    "fields": {
+      "number": 34010,
+      "company": 1,
+      "from_location": 3,
+      "to_location": 1,
+      "cost": 1405,
+      "available": 71,
+      "from_date": "2018-05-20 13:56",
+      "to_date": "2018-05-20 22:26",
+      "flight_class": "FIRST"
+    }
+  },
+  {
+    "model": "travel_agency.Flight",
+    "pk": 7,
+    "fields": {
+      "number": 34010,
+      "company": 1,
+      "from_location": 1,
+      "to_location": 3,
+      "cost": 480,
+      "available": 73,
+      "from_date": "2018-05-20 17:30",
+      "to_date": "2018-05-20 08:48",
+      "flight_class": "ECONOMY"
+    }
+  },
+  {
+    "model": "travel_agency.Flight",
+    "pk": 8,
+    "fields": {
+      "number": 34010,
+      "company": 1,
+      "from_location": 3,
+      "to_location": 1,
+      "cost": 510,
+      "available": 71,
+      "from_date": "2018-05-30 13:56",
+      "to_date": "2018-05-30 22:26",
+      "flight_class": "ECONOMY"
+    }
+  },
+  {
+    "model": "travel_agency.Flight",
+    "pk": 9,
+    "fields": {
+      "number": 34011,
+      "company": 2,
+      "from_location": 1,
+      "to_location": 2,
+      "cost": 500,
+      "available": 22,
+      "from_date": "2018-05-20 13:56",
+      "to_date": "2018-05-20 22:26",
+      "flight_class": "ECONOMY"
+    }
+  },
+  {
+    "model": "travel_agency.Flight",
+    "pk": 2,
+    "fields": {
+      "number": 13136,
+      "company": 2,
+      "from_location": 2,
+      "to_location": 3,
+      "cost": 466,
+      "available": 83,
+      "from_date": "2018-05-23 08:30",
+      "to_date": "2018-05-23 11:54",
+      "flight_class": "ECONOMY"
+    }
+  },
+  {
+    "model": "travel_agency.Flight",
+    "pk": 3,
+    "fields": {
+      "number": 13136,
+      "company": 2,
+      "from_location": 3,
+      "to_location": 2,
+      "cost": 400,
+      "available": 42,
+      "from_date": "2018-06-03 15:20",
+      "to_date": "2018-06-03 16:49",
+      "flight_class": "ECONOMY"
+    }
+  },
+  {
+    "model": "travel_agency.Flight",
+    "pk": 4,
+    "fields": {
+      "number": 62977,
+      "company": 2,
+      "from_location": 4,
+      "to_location": 3,
+      "cost": 919,
+      "available": 105,
+      "from_date": "2018-05-21 22:36",
+      "to_date": "2018-05-21 00:47",
+      "flight_class": "ECONOMY"
+    }
+  },
+  {
+    "model": "travel_agency.Flight",
+    "pk": 5,
+    "fields": {
+      "number": 35513,
+      "company": 2,
+      "from_location": 3,
+      "to_location": 6,
+      "cost": 213,
+      "available": 23,
+      "from_date": "2018-05-25 12:50",
+      "to_date": "2018-05-25 06:22",
+      "flight_class": "ECONOMY"
+    }
+  },
+  {
+    "model": "travel_agency.Flight",
+    "pk": 6,
+    "fields": {
+      "number": 43548,
+      "company": 2,
+      "from_location": 6,
+      "to_location": 3,
+      "cost": 482,
+      "available": 87,
+      "from_date": "2018-05-28 17:30",
+      "to_date": "2018-05-28 08:48",
+      "flight_class": "ECONOMY"
+    }
+  }
+]

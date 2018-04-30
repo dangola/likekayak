@@ -12,4 +12,5 @@ urlpatterns = [
     url(r'^flights/', views.flights, name='flights'),
     url(r'^cars/', views.cars, name='cars'),
     url(r'^packages/', views.packages, name='packages'),
+    url(r'^settings/', views.settings, name='settings'),
 ]

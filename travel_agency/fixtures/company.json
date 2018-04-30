@@ -1,0 +1,44 @@
+[
+  {
+    "model": "travel_agency.Company", 
+    "pk": 1,
+    "fields": {
+      "name": "American Airlines"
+    }
+  },
+  {
+    "model": "travel_agency.Company", 
+    "pk": 2,
+    "fields": {
+      "name": "Delta Airlines"
+    }
+  },
+  {
+    "model": "travel_agency.Company", 
+    "pk": 3,
+    "fields": {
+      "name": "Frontier Airlines"
+    }
+  },
+  {
+    "model": "travel_agency.Company", 
+    "pk": 4,
+    "fields": {
+      "name": "Hertz"
+    }
+  },
+  {
+    "model": "travel_agency.Company", 
+    "pk": 5,
+    "fields": {
+      "name": "Avis"
+    }
+  },
+  {
+    "model": "travel_agency.Company", 
+    "pk": 6,
+    "fields": {
+      "name": "Alamo"
+    }
+  }
+]
