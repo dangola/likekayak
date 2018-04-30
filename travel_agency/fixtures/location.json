@@ -3,63 +3,63 @@
     "model": "travel_agency.Location", 
     "pk": 1,
     "fields": {
-      "city": "New York City",
-      "state": "New York",
-      "country": "United States of America"
+      "city": "new york city",
+      "state": "new york",
+      "country": "united states of america"
     }
   },
   {
     "model": "travel_agency.Location", 
     "pk": 2,
     "fields": {
-      "city": "Los Angeles",
-      "state": "California",
-      "country": "United States of America"
+      "city": "los angeles",
+      "state": "california",
+      "country": "united states of america"
     }
   },
   {
     "model": "travel_agency.Location", 
     "pk": 3,
     "fields": {
-      "city": "Boulder",
-      "state": "Colorado",
-      "country": "United States of America"
+      "city": "boulder",
+      "state": "colorado",
+      "country": "united states of america"
     }
   },
   {
     "model": "travel_agency.Location", 
     "pk": 4,
     "fields": {
-      "city": "Philadelphia",
-      "state": "Pennsylvania",
-      "country": "United States of America"
+      "city": "philadelphia",
+      "state": "pennsylvania",
+      "country": "united states of america"
     }
   },
   {
     "model": "travel_agency.Location", 
     "pk": 5,
     "fields": {
-      "city": "Boston",
-      "state": "Massachusetts",
-      "country": "United States of America"
+      "city": "boston",
+      "state": "massachusetts",
+      "country": "united states of america"
     }
   },
   {
     "model": "travel_agency.Location", 
     "pk": 6,
     "fields": {
-      "city": "Seattle",
-      "state": "Washington",
-      "country": "United States of America"
+      "city": "seattle",
+      "state": "washington",
+      "country": "united states of america"
     }
   },
   {
     "model": "travel_agency.Location", 
     "pk": 7,
     "fields": {
-      "city": "Denver",
-      "state": "Colorado",
-      "country": "United States of America"
+      "city": "denver",
+      "state": "colorado",
+      "country": "united states of america"
     }
   }
 ]

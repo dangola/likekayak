@@ -17,7 +17,7 @@ class SearchForm(forms.ModelForm):
     from_location = forms.CharField(widget=forms.TextInput())
     to_location = forms.CharField(widget=forms.TextInput())
     travelers_count = forms.IntegerField(widget=forms.NumberInput())
-    round_trip = forms.BooleanField(widget=forms.SelectInput())
+    # round_trip = forms.BooleanField(widget=forms.SelectInput())
 
     def clean(self):
         cleaned_data = self.cleaned_data

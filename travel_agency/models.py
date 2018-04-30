@@ -11,7 +11,7 @@ class Address(models.Model):
     line1 = models.CharField(max_length=50)
     line2 = models.CharField(max_length=50)
     city = models.CharField(max_length=35)
-    state = models.CharField(max_length=2)
+    state = models.CharField(max_length=35)
     country = models.CharField(max_length=50)
     zip_code = models.IntegerField()
 
@@ -158,25 +158,21 @@ class Cruise(models.Model):
 class Amenities(models.Model):
     amenities_id = models.IntegerField(primary_key=True)
     breakfast = models.BooleanField(default=False)
-    internet = models.BooleanField(default=False)
     parking = models.BooleanField(default=False)
     fitness = models.BooleanField(default=False)
     pool = models.BooleanField(default=False)
     bar = models.BooleanField(default=False)
+    wifi = models.BooleanField(default=False)
 
 class Hotel(models.Model):
-    number = models.CharField(max_length=5, default=00000)
+    hotel_id = models.IntegerField(primary_key=True)
     company = models.ForeignKey(Company, on_delete="DO_NOTHING", default=1)
-    location = models.ForeignKey(Location, on_delete="DO_NOTHING", default=1)
+    addr = models.OneToOneField(Address, on_delete="CASCADE")
     cost = models.IntegerField(default=0)
     available = models.IntegerField(default=0)
     from_date = models.DateTimeField(default=datetime.now)
     to_date = models.DateTimeField(default=datetime.now)
-    hotel_id = models.IntegerField(primary_key=True)
-    location = models.OneToOneField(Location, on_delete="DO_NOTHING")
-    addr = models.OneToOneField(Address, on_delete="CASCADE")
     amenities = models.OneToOneField(Amenities, on_delete="CASCADE")
-    cost = models.IntegerField()
 
 class Review(models.Model):
     review_id = models.IntegerField(primary_key=True)

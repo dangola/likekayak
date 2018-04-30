@@ -3,42 +3,56 @@
     "model": "travel_agency.Company", 
     "pk": 1,
     "fields": {
-      "name": "American Airlines"
+      "name": "american airlines"
     }
   },
   {
     "model": "travel_agency.Company", 
     "pk": 2,
     "fields": {
-      "name": "Delta Airlines"
+      "name": "delta airlines"
     }
   },
   {
     "model": "travel_agency.Company", 
     "pk": 3,
     "fields": {
-      "name": "Frontier Airlines"
+      "name": "frontier airlines"
     }
   },
   {
     "model": "travel_agency.Company", 
     "pk": 4,
     "fields": {
-      "name": "Hertz"
+      "name": "hertz"
     }
   },
   {
     "model": "travel_agency.Company", 
     "pk": 5,
     "fields": {
-      "name": "Avis"
+      "name": "avis"
     }
   },
   {
     "model": "travel_agency.Company", 
     "pk": 6,
     "fields": {
-      "name": "Alamo"
+      "name": "alamo"
+    }
+  },
+  {
+    "model": "travel_agency.Company",
+    "pk": 7,
+    "fields": {
+      "name": "boulder marriott"
+    }
+  },
+  {
+    "model": "travel_agency.Company",
+    "pk": 8,
+    "fields": {
+      "name": "days hotel by wyndham boulder, boulder"
     }
   }
 ]
