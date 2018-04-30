@@ -1,0 +1,26 @@
+[
+  {
+    "model": "travel_agency.Address", 
+    "pk": 1,
+    "fields": {
+      "line1" : "2660 Canyon Boulevard",
+      "line2" : "",
+      "city" : "boulder",
+      "state" : "colorado",
+      "country" : "united states of america",
+      "zip_code" : 80302
+    }
+  },
+  {
+    "model": "travel_agency.Address", 
+    "pk": 2,
+    "fields": {
+      "line1" : "5397 S Boulder Rd",
+      "line2" : "Hwy 36 & Boulder Rd/ Table Mesa Exit",
+      "city" : "boulder",
+      "state" : "colorado",
+      "country" : "united states of america",
+      "zip_code" : 80303
+    }
+  }
+]

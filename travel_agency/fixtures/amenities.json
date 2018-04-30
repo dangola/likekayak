@@ -1,0 +1,26 @@
+[
+  {
+    "model": "travel_agency.Amenities", 
+    "pk": 1,
+    "fields": {
+      "breakfast" : "False",
+      "parking" : "True",
+      "fitness" : "True",
+      "pool" : "True",
+      "bar" : "True",
+      "wifi" : "False"
+    }
+  },
+  {
+    "model": "travel_agency.Amenities", 
+    "pk": 2,
+    "fields": {
+      "breakfast" : "True",
+      "parking" : "True",
+      "fitness" : "False",
+      "pool" : "True",
+      "bar" : "False",
+      "wifi" : "True"
+    }
+  }
+]

@@ -61,13 +61,20 @@ def flights(request):
             from_date = request.POST['from_date']
             to_date = request.POST['to_date']
             travelers_count = request.POST['travelers_count']
+            round_trip = request.POST.get('round_trip', False)
             context = {
-                'flights': Flight.search(from_location, to_location, from_date, to_date, travelers_count),
+                'departure_flights': Flight.search(from_location, to_location, from_date, travelers_count),
                 'to_location': to_location,
                 'travelers_count': travelers_count
             }
-            if context['flights']:
-                return render(request, 'travel_agency/flights.html', context)
+            if round_trip:
+                context['return_flights'] = Flight.search(to_location, from_location, to_date, travelers_count)
+                context['return_to_location'] = from_location
+            if context['departure_flights']:
+                if round_trip and not context['return_flights']:
+                    return render(request, 'travel_agency/flights.html', {'error_message': 'Oops! We don\'t have any flights for that.'})  
+                else:
+                    return render(request, 'travel_agency/flights.html', context)
             else:
                 return render(request, 'travel_agency/flights.html', {'error_message': 'Oops! We don\'t have any flights for that.'})
         else:
