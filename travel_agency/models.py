@@ -78,7 +78,7 @@ class Flight(models.Model):
     flight_id = models.IntegerField(primary_key=True)
     flight_class = models.CharField(max_length=10, choices=CLASS_CHOICES)
    
-    def search(from_location, to_location, from_date, to_date, travelers_count):
+    def search(from_location, to_location, date, travelers_count):
         cursor = connection.cursor()
         try:
             cursor.execute('''
@@ -91,8 +91,9 @@ class Flight(models.Model):
                 )
                 WHERE   city=%s AND
                         available >= %s AND
-                        from_date LIKE %s
-            ''', (from_location, travelers_count, from_date+'%'))
+                        from_date LIKE %sand
+                        to_location_id = (SELECT location_id FROM travel_agency_location WHERE city = %s)
+            ''', (from_location, travelers_count, date+'%', to_location))
             results = [dict((cursor.description[i][0], value) \
                for i, value in enumerate(row)) for row in cursor.fetchall()]
         finally:
@@ -122,28 +123,6 @@ class Car(models.Model):
     confirmation_id = models.IntegerField()
     car_class = models.CharField(max_length=10, choices=CLASS_CHOICES)
 
-    def search(from_location, to_location, from_date, to_date, travelers_count):
-        cursor = connection.cursor()
-        try:
-            cursor.execute('''
-                SELECT name, from_date, flight_class, city, state, cost
-                FROM (
-                    SELECT *
-                    FROM travel_agency_flight
-                    INNER JOIN travel_agency_location ON travel_agency_flight.from_location_id=travel_agency_location.location_id
-                    INNER JOIN travel_agency_company ON travel_agency_flight.company_id=travel_agency_company.company_id
-                )
-                WHERE   city=%s AND
-                        available >= %s AND
-                        from_date LIKE %s
-            ''', (from_location, travelers_count, from_date+'%'))
-            results = [dict((cursor.description[i][0], value) \
-               for i, value in enumerate(row)) for row in cursor.fetchall()]
-        finally:
-            connection.close()
-
-        return results
-
 class Cruise(models.Model):
     number = models.CharField(max_length=5, default=00000)
     company = models.ForeignKey(Company, on_delete="DO_NOTHING", default=1)
@@ -166,15 +145,12 @@ class Amenities(models.Model):
     wifi = models.BooleanField(default=False)
 
 class Hotel(models.Model):
-    number = models.CharField(max_length=5, default=00000)
+    hotel_id = models.IntegerField(primary_key=True)
     company = models.ForeignKey(Company, on_delete="DO_NOTHING", default=1)
-    location = models.ForeignKey(Location, on_delete="DO_NOTHING", default=1)
     cost = models.IntegerField(default=0)
     available = models.IntegerField(default=0)
     from_date = models.DateTimeField(default=datetime.now)
     to_date = models.DateTimeField(default=datetime.now)
-    hotel_id = models.IntegerField(primary_key=True)
-    location = models.OneToOneField(Location, on_delete="DO_NOTHING")
     addr = models.OneToOneField(Address, on_delete="CASCADE")
     amenities = models.OneToOneField(Amenities, on_delete="CASCADE")
     cost = models.IntegerField()
