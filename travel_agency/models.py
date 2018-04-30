@@ -93,12 +93,12 @@ class Flight(models.Model):
                         available >= %s AND
                         from_date LIKE %s
             ''', (from_location, travelers_count, from_date+'%'))
-            result = [dict((cursor.description[i][0], value) \
+            results = [dict((cursor.description[i][0], value) \
                for i, value in enumerate(row)) for row in cursor.fetchall()]
         finally:
             connection.close()
 
-        return result
+        return results
 
 class Car(models.Model):
     CLASS_CHOICES = (
@@ -137,12 +137,12 @@ class Car(models.Model):
                         available >= %s AND
                         from_date LIKE %s
             ''', (from_location, travelers_count, from_date+'%'))
-            result = [dict((cursor.description[i][0], value) \
+            results = [dict((cursor.description[i][0], value) \
                for i, value in enumerate(row)) for row in cursor.fetchall()]
         finally:
             connection.close()
 
-        return result
+        return results
 
 class Cruise(models.Model):
     number = models.CharField(max_length=5, default=00000)

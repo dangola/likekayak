@@ -54,31 +54,32 @@ def logout_user(request):
 
 def flights(request):
     form = SearchForm(request.POST or None)
-    if form.is_valid():
-        from_location = request.POST['from_location']
-        to_location = request.POST['to_location']
-        from_date = request.POST['from_date']
-        to_date = request.POST['to_date']
-        travelers_count = request.POST['travelers_count']
-        return HttpResponse(Flight.search(from_location, to_location, from_date, to_date, travelers_count))
+    if request.method == 'POST':
+        if form.is_valid():
+            from_location = request.POST['from_location']
+            to_location = request.POST['to_location']
+            from_date = request.POST['from_date']
+            to_date = request.POST['to_date']
+            travelers_count = request.POST['travelers_count']
+            context = {
+                'flights': Flight.search(from_location, to_location, from_date, to_date, travelers_count),
+                'to_location': to_location,
+                'travelers_count': travelers_count
+            }
+            if context['flights']:
+                return render(request, 'travel_agency/flights.html', context)
+            else:
+                return render(request, 'travel_agency/flights.html', {'error_message': 'Oops! We don\'t have any flights for that.'})
+        else:
+            return render(request, 'travel_agency/flights.html', {'error_message': form.errors.as_text})
+    
     context = {
         'form': form,
     }
     return render(request, 'travel_agency/flights.html', context)
 
-def flights(request):
-    form = SearchForm(request.POST or None)
-    if form.is_valid():
-        from_location = request.POST['from_location']
-        to_location = request.POST['to_location']
-        from_date = request.POST['from_date']
-        to_date = request.POST['to_date']
-        travelers_count = request.POST['travelers_count']
-        return HttpResponse(Car.search(from_location, to_location, from_date, to_date, travelers_count))
-    context = {
-        'form': form,
-    }
-    return render(request, 'travel_agency/flights.html', context)
+def cars(request):
+    return HttpResponse('temp')
 
 def packages(request):
     if request.method == 'POST':

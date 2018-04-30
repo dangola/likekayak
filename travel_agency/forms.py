@@ -18,6 +18,11 @@ class SearchForm(forms.ModelForm):
     to_location = forms.CharField(widget=forms.TextInput())
     travelers_count = forms.IntegerField(widget=forms.NumberInput())
 
+    def clean(self):
+        cleaned_data = self.cleaned_data
+        if cleaned_data.get('travelers_count') < 1:
+            raise forms.ValidationError(u'Please enter at least 1 traveler.')
+
     class Meta:
         model = Search
         fields = ['from_date', 'to_date']
