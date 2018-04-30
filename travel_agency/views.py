@@ -4,6 +4,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.views import generic
 from django.views.generic import View
 from .forms import UserForm, SearchForm
+from .models import *
 
 # Create your views here.
 
@@ -45,11 +46,39 @@ def login_user(request):
 
 def logout_user(request):
     logout(request)
-    form = UserForm(request.POST or None)
+    form = UserForm()
     context = {
         "form": form,
     }
     return render(request, 'travel_agency/login.html', context)
+
+def flights(request):
+    form = SearchForm(request.POST or None)
+    if form.is_valid():
+        from_location = request.POST['from_location']
+        to_location = request.POST['to_location']
+        from_date = request.POST['from_date']
+        to_date = request.POST['to_date']
+        travelers_count = request.POST['travelers_count']
+        return HttpResponse(Flight.search(from_location, to_location, from_date, to_date, travelers_count))
+    context = {
+        'form': form,
+    }
+    return render(request, 'travel_agency/flights.html', context)
+
+def flights(request):
+    form = SearchForm(request.POST or None)
+    if form.is_valid():
+        from_location = request.POST['from_location']
+        to_location = request.POST['to_location']
+        from_date = request.POST['from_date']
+        to_date = request.POST['to_date']
+        travelers_count = request.POST['travelers_count']
+        return HttpResponse(Car.search(from_location, to_location, from_date, to_date, travelers_count))
+    context = {
+        'form': form,
+    }
+    return render(request, 'travel_agency/flights.html', context)
 
 def packages(request):
     if request.method == 'POST':

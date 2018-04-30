@@ -14,13 +14,14 @@ class UserForm(forms.ModelForm):
         fields = ['username', 'email', 'password']
 
 class SearchForm(forms.ModelForm):
+    from_location = forms.CharField(widget=forms.TextInput())
+    to_location = forms.CharField(widget=forms.TextInput())
+    travelers_count = forms.IntegerField(widget=forms.NumberInput())
+
     class Meta:
         model = Search
-        fields = ['from_location', 'to_location', 'from_date', 'to_date', 'travelers_count']
+        fields = ['from_date', 'to_date']
         widgets = {
             'from_date': DateInput(),
-            'to_date': DateInput(),
-        }
-        initial = {
-            'travelers_count': 1
+            'to_date': DateInput()
         }
