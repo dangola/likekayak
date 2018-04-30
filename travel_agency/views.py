@@ -66,6 +66,7 @@ def flights(request):
                 'to_location': to_location,
                 'travelers_count': travelers_count
             }
+            # if 
             if context['flights']:
                 return render(request, 'travel_agency/flights.html', context)
             else:

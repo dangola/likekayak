@@ -163,6 +163,7 @@ class Amenities(models.Model):
     fitness = models.BooleanField(default=False)
     pool = models.BooleanField(default=False)
     bar = models.BooleanField(default=False)
+    wifi = models.BooleanField(default=False)
 
 class Hotel(models.Model):
     number = models.CharField(max_length=5, default=00000)
