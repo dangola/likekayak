@@ -46,12 +46,12 @@ function select(id) {
       }
     })
 }
-function purchase(id) {
+function purchase(id, travelers_count) {
     $.ajax({
       url: '{% url "purchase" %}',
       type: 'POST',
       contentType: 'application/json',
-      data: JSON.stringify({ 'flight_id': id }),
+      data: JSON.stringify({ 'flight_id': id, 'travelers_count': travelers_count }),
       dataType: "json",
       success: function(resp) {
         $("[id='avail "+id+"']").replaceWith(resp.available);
@@ -109,7 +109,7 @@ function purchase(id) {
                                 <form>
                                     CC Number <input name="cc_num" type="text">
                                     Security Code <input name="security_code" type="text">
-                                    <button type="button" class="btn btn-primary" onclick="purchase({{flight.flight_id}})">Purchase</button>
+                                    <button type="button" class="btn btn-primary" onclick="purchase({{flight.flight_id}}, {{ travelers_count }})">Purchase</button>
                                 </form>
                             </div>
                         </div>
@@ -139,7 +139,7 @@ function purchase(id) {
                                     <form>
                                         CC Number <input name="cc_num" type="text">
                                         Security Code <input name="security_code" type="text">
-                                        <button type="button" class="btn btn-primary" onclick="purchase({{flight.flight_id}})">Purchase</button>
+                                        <button type="button" class="btn btn-primary" onclick="purchase({{flight.flight_id}}, {{travelers_count}})">Purchase</button>
                                     </form>
                                 </div>
                             </div>

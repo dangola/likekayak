@@ -11,6 +11,7 @@ urlpatterns = [
     url(r'^logout/', views.logout_user, name='logout'),
     url(r'^flights/', views.flights, name='flights'),
     url(r'^cars/', views.cars, name='cars'),
+    url(r'^orders/', views.orders, name='orders'),
     url(r'^packages/', views.packages, name='packages'),
     url(r'^purchase/', views.purchase, name='purchase'),
     url(r'^select/', views.select, name='select'),

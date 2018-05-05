@@ -66,6 +66,9 @@ def flights(request):
             price = request.POST.get('price')
             time = request.POST.get('time')
             review = request.POST.get('sort')
+            non_stop = request.POST.get('non_stop', False)
+            one_stop = request.POST.get('one_stop', False)
+            two_stop = request.POST.get('two_stop', False)
 
             context['departure_flights'] = Flight.search(from_location, to_location, from_date, travelers_count, price, time, review)
             context['to_location'] = to_location
@@ -121,6 +124,15 @@ def select(request):
 def purchase(request):
     if request.method == 'POST':
         data = json.loads(request.body)
-        Flight.purchase(data['flight_id'])
+        Flight.purchase(data['flight_id'], data['travelers_count'])
+        if request.user.is_authenticated:
+            Orders.add_order(request.user, data['flight_id'])
         flight = Flight.get_flight(data['flight_id'])
         return HttpResponse(json.dumps({'available': flight[0]['available']}), content_type='application/json')
+
+def orders(request):
+    context = {
+        'orders': Orders.get_orders(request.user)
+    }
+    print(context)
+    return render(request, 'travel_agency/orders.html', context)

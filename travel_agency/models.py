@@ -100,9 +100,15 @@ class Flight(models.Model):
             elif int(price) == 2:
                 query += " ORDER BY cost DESC "
             if int(time) == 1:
-                query += " ORDER BY to_date-from_date "
+                if "ORDER BY" not in query:
+                    query += " ORDER BY to_date-from_date "
+                else:
+                    query += ", to_date-from_date"
             elif int(time) == 2:
-                query += " ORDER BY to_date-from_date DESC "
+                if "ORDER BY" not in query:
+                    query += " ORDER BY to_date-from_date DESC "
+                else:
+                    query += ", to_date-from_date DESC"
 
             cursor.execute(query, (from_location, travelers_count, date+'%', to_location))
             results = [dict((cursor.description[i][0], value) \
@@ -128,15 +134,15 @@ class Flight(models.Model):
 
         return results
 
-    def purchase(flight_id):
+    def purchase(flight_id, travelers_count):
         cursor = connection.cursor()
         try:
             query = '''
                 UPDATE travel_agency_flight
-                SET available=available-1
+                SET available=available-%s
                 WHERE flight_id=%s
             '''
-            cursor.execute(query, (flight_id,))
+            cursor.execute(query, (travelers_count, flight_id))
         finally:
             connection.close()
 
@@ -200,7 +206,36 @@ class Review(models.Model):
     rating = models.IntegerField()
     date = models.DateField(default=datetime.now)
 
-# class Cart(models.Model):
-#     cart_id = models.IntegerField(primary_key=True)
-#     user_id = models.OneToOneField(User, on_delete="DO_NOTHING")
-#     flight_id = models.ForeignKey(Flight, on_delete="DO_NOTHING")
+class FlightOrders(models.Model):
+    order_id = models.IntegerField(primary_key=True)
+    user_id = models.OneToOneField(User, unique=False, on_delete="DO_NOTHING")
+    flight_id = models.ForeignKey(Flight, unique=False, on_delete="DO_NOTHING")
+
+    def get_orders(user):
+        cursor = connection.cursor()
+        try:
+            query = '''
+                SELECT * 
+                FROM travel_agency_flight
+                INNER JOIN travel_agency_flightorders ON
+                travel_agency_flight.flight_id = travel_agency_orders.flight_id_id
+                WHERE user_id_id = (SELECT id FROM auth_user WHERE username=%s)
+            '''
+            cursor.execute(query, (str(user),))
+            results = [dict((cursor.description[i][0], value) \
+               for i, value in enumerate(row)) for row in cursor.fetchall()]
+        finally:
+            connection.close()
+
+        return results
+
+    def add_order(user, flight_id):
+        cursor = connection.cursor()
+        try:
+            query = '''
+                INSERT INTO travel_agency_flightorders (user_id_id, flight_id_id)
+                VALUES ((SELECT id FROM auth_user WHERE username=%s), %s)
+            '''
+            cursor.execute(query, (str(user), int(flight_id),))
+        finally:
+            connection.close()
