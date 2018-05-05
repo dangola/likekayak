@@ -2,7 +2,65 @@
 {% load multiply %}
 {% block title %}Flights{% endblock %}
 
+
 {% block body %}
+
+<script type="text/javascript">
+
+function getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie != '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = jQuery.trim(cookies[i]);
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+var csrftoken = getCookie('csrftoken');
+function csrfSafeMethod(method) {
+    // these HTTP methods do not require CSRF protection
+    return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+}
+$.ajaxSetup({
+    beforeSend: function(xhr, settings) {
+        if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+        }
+    }
+});
+function select(id) {
+    $.ajax({
+      url: '{% url "select" %}',
+      type: 'POST',
+      contentType: 'application/json',
+      data: JSON.stringify({ 'flight_id': id }),
+      dataType: "json",
+      success: function(resp) {
+        $("div.panel-body."+resp.flight_id).toggle();
+      }
+    })
+}
+function purchase(id) {
+    $.ajax({
+      url: '{% url "purchase" %}',
+      type: 'POST',
+      contentType: 'application/json',
+      data: JSON.stringify({ 'flight_id': id }),
+      dataType: "json",
+      success: function(resp) {
+        $("[id='avail "+id+"']").replaceWith(resp.available);
+      }
+    })
+}
+
+</script>
+
 {% if form or error_message %}
 <div class="container-fluid">
     <div class="row">
@@ -19,7 +77,7 @@
                         {% include 'travel_agency/form_template.html' %}
                         <div class="form-group">
                             <div class="col-sm-offset-2 col-sm-10">
-                                <button type="submit" class="btn btn-success">Search</button>
+                                <button type="submit" class="btn btn-success" href="{% url 'purchase' %}" name="button">Search</button>
                             </div>
                         </div>
                     </form>
@@ -30,6 +88,10 @@
     </div>
 </div>
 {% else %}
+<div class="flights">
+    <div class="container-fluid">
+        <h3>Departure Flights</h3>
+    </div>
     {% for flight in departure_flights %}
         <div class="container-fluid">
             <div class="row">
@@ -41,14 +103,25 @@
                             {{ flight.flight_class }}
                             {{ flight.city }}&rarr;{{ to_location }}
                             {{ flight.from_date }}
-                            <button type="button" class="btn btn-primary">Purchase</button>
+                            Available: <span id="avail {{flight.flight_id}}">{{ flight.available }}</span>
+                            <button type="button" class="btn btn-primary" onclick="select({{ flight.flight_id }})">Select</button>
+                            <div class="panel-body {{ flight.flight_id }}" style="display: none;">
+                                <form>
+                                    CC Number <input name="cc_num" type="text">
+                                    Security Code <input name="security_code" type="text">
+                                    <button type="button" class="btn btn-primary" onclick="purchase({{flight.flight_id}})">Purchase</button>
+                                </form>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     {% endfor %}
-    {% if return_flights %}
+    {% if return_flights %}            
+    <div class="container-fluid">
+        <h3>Arrival Flights</h3>
+    </div>
         {% for flight in return_flights %}
             <div class="container-fluid">
                 <div class="row">
@@ -60,7 +133,15 @@
                                 {{ flight.flight_class }}
                                 {{ flight.city }}&rarr;{{ return_to_location }}
                                 {{ flight.from_date }}
-                                <button type="button" class="btn btn-primary float-right">Purchase</button>
+                                Available: <span id="avail {{flight.flight_id}}">{{ flight.available }}</span>
+                                <button type="button" class="btn btn-primary float-right" onclick="select({{ flight.flight_id }})">Select</button>
+                                <div class="panel-body {{ flight.flight_id }}" style="display: none;">
+                                    <form>
+                                        CC Number <input name="cc_num" type="text">
+                                        Security Code <input name="security_code" type="text">
+                                        <button type="button" class="btn btn-primary" onclick="purchase({{flight.flight_id}})">Purchase</button>
+                                    </form>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -68,5 +149,13 @@
             </div>
         {% endfor %}
     {% endif %}
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-12 col-md-6">
+                <a href="{% url 'flights' %}" class="btn btn-success">Return to searches</a>
+            </div>
+        </div>
+    </div>
+</div>
 {% endif %}
 {% endblock %}

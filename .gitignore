@@ -5,3 +5,12 @@ travel_agency/__pycache__/
 travel_agency/.DS_Store
 desktop.ini
 travel_agency/templatetags/__pycache__/
+kdad/__pycache__/__init__.cpython-36.pyc
+kdad/__pycache__/settings.cpython-36.pyc
+kdad/__pycache__/urls.cpython-36.pyc
+travel_agency/__pycache__/__init__.cpython-36.pyc
+travel_agency/__pycache__/admin.cpython-36.pyc
+travel_agency/__pycache__/apps.cpython-36.pyc
+travel_agency/__pycache__/urls.cpython-36.pyc
+travel_agency/templatetags/__pycache__/__init__.cpython-36.pyc
+travel_agency/templatetags/__pycache__/multiply.cpython-36.pyc

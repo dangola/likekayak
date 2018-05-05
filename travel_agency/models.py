@@ -78,11 +78,11 @@ class Flight(models.Model):
     flight_id = models.IntegerField(primary_key=True)
     flight_class = models.CharField(max_length=10, choices=CLASS_CHOICES)
    
-    def search(from_location, to_location, date, travelers_count):
+    def search(from_location, to_location, date, travelers_count, price, time, review):
         cursor = connection.cursor()
         try:
-            cursor.execute('''
-                SELECT name, from_date, flight_class, city, state, cost
+            query = '''
+                SELECT flight_id, name, from_date, flight_class, city, state, cost, available
                 FROM (
                     SELECT *
                     FROM travel_agency_flight
@@ -91,15 +91,54 @@ class Flight(models.Model):
                 )
                 WHERE   city=%s AND
                         available >= %s AND
-                        from_date LIKE %sand
-                        to_location_id = (SELECT location_id FROM travel_agency_location WHERE city = %s)
-            ''', (from_location, travelers_count, date+'%', to_location))
+                        from_date LIKE %s AND
+                        to_location_id = (SELECT location_id FROM travel_agency_location WHERE city = %s) 
+            '''
+            if int(price) == 1:
+                print(price)
+                query += " ORDER BY cost "
+            elif int(price) == 2:
+                query += " ORDER BY cost DESC "
+            if int(time) == 1:
+                query += " ORDER BY to_date-from_date "
+            elif int(time) == 2:
+                query += " ORDER BY to_date-from_date DESC "
+
+            cursor.execute(query, (from_location, travelers_count, date+'%', to_location))
             results = [dict((cursor.description[i][0], value) \
                for i, value in enumerate(row)) for row in cursor.fetchall()]
         finally:
             connection.close()
 
         return results
+
+    def get_flight(flight_id):
+        cursor = connection.cursor()
+        try:
+            query = '''
+                SELECT * 
+                FROM travel_agency_flight
+                WHERE travel_agency_flight.flight_id = %s
+            '''
+            cursor.execute(query, (flight_id,))
+            results = [dict((cursor.description[i][0], value) \
+               for i, value in enumerate(row)) for row in cursor.fetchall()]
+        finally:
+            connection.close()
+
+        return results
+
+    def purchase(flight_id):
+        cursor = connection.cursor()
+        try:
+            query = '''
+                UPDATE travel_agency_flight
+                SET available=available-1
+                WHERE flight_id=%s
+            '''
+            cursor.execute(query, (flight_id,))
+        finally:
+            connection.close()
 
 class Car(models.Model):
     CLASS_CHOICES = (
@@ -160,3 +199,8 @@ class Review(models.Model):
     content = models.CharField(max_length=256)
     rating = models.IntegerField()
     date = models.DateField(default=datetime.now)
+
+# class Cart(models.Model):
+#     cart_id = models.IntegerField(primary_key=True)
+#     user_id = models.OneToOneField(User, on_delete="DO_NOTHING")
+#     flight_id = models.ForeignKey(Flight, on_delete="DO_NOTHING")

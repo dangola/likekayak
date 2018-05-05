@@ -1,6 +1,7 @@
 from django.contrib.auth.models import User
 from django import forms
 from .models import *
+from django.utils.translation import gettext as _
 
 
 class DateInput(forms.DateInput):
@@ -18,7 +19,24 @@ class SearchForm(forms.ModelForm):
     to_location = forms.CharField(widget=forms.TextInput())
     travelers_count = forms.IntegerField(widget=forms.NumberInput())
     round_trip = forms.BooleanField(widget=forms.CheckboxInput(), required=False)
-
+    price_choices = (
+        (0, _("None")),
+        (1, _("$->$$$")),
+        (2, _("$$$->$"))
+    )
+    price = forms.ChoiceField(choices=price_choices, required=False)
+    time_choices = (
+        (0, _("None")),
+        (1, _("Shortest->Longest")),
+        (2, _("Longest->Shortest"))
+    )
+    time = forms.ChoiceField(choices=time_choices, required=False)
+    review_choices = (
+        (0, _("None")),
+        (1, _("Lowest Ratings")),
+        (2, _("Highest Ratings"))
+    )
+    review = forms.ChoiceField(choices=review_choices, required=False)
     def clean(self):
         cleaned_data = self.cleaned_data
         if cleaned_data.get('travelers_count') < 1:

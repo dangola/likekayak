@@ -12,5 +12,7 @@ urlpatterns = [
     url(r'^flights/', views.flights, name='flights'),
     url(r'^cars/', views.cars, name='cars'),
     url(r'^packages/', views.packages, name='packages'),
+    url(r'^purchase/', views.purchase, name='purchase'),
+    url(r'^select/', views.select, name='select'),
     url(r'^settings/', views.settings, name='settings'),
 ]
