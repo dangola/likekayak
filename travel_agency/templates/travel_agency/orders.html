@@ -12,11 +12,12 @@
             <div class="col-sm-12 col-md-6">
                 <div class="panel panel-default">
                     <div class="panel-body">
-                        Company: {{ order.company_id }}
+                        Company: {{ order.name }}
                         Cost: ${{ order.cost }}
+                        Quantity: {{ order.travelers_count }}
                         {{ order.flight_class }}
-                        From:{{ order.from_location_id }}&rarr;To:{{ order.to_location_id }}
-                        {{ order.from_date }}
+                        {{ order.from_city }}&rarr;{{ order.to_city }}
+                        {{ order.from_date }}-{{ order.to_date }}
                     </div>
                 </div>
             </div>

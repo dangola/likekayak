@@ -126,13 +126,12 @@ def purchase(request):
         data = json.loads(request.body)
         Flight.purchase(data['flight_id'], data['travelers_count'])
         if request.user.is_authenticated:
-            Orders.add_order(request.user, data['flight_id'])
+            FlightOrders.add_order(request.user, data['flight_id'], data['travelers_count'])
         flight = Flight.get_flight(data['flight_id'])
         return HttpResponse(json.dumps({'available': flight[0]['available']}), content_type='application/json')
 
 def orders(request):
     context = {
-        'orders': Orders.get_orders(request.user)
+        'orders': FlightOrders.get_orders(request.user)
     }
-    print(context)
     return render(request, 'travel_agency/orders.html', context)
