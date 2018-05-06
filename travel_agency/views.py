@@ -67,7 +67,6 @@ def flights(request):
             time = request.POST.get('time')
             non_stop = request.POST.get('non_stop', False) == 'on'
             one_stop = request.POST.get('one_stop', False) == 'on'
-            two_stop = request.POST.get('two_stop', False) == 'on'
 
             if non_stop:
                 context['non_stop_departure_flights'] = Flight.search(from_location, to_location, from_date, travelers_count, price, time)
@@ -145,8 +144,15 @@ def hotels(request):
             rooms_count = request.POST['rooms_count']
             from_date = request.POST['from_date']
             to_date = request.POST['to_date']
+            breakfast = request.POST.get('breakfast', False) == 'on'
+            bar = request.POST.get('bar', False) == 'on'
+            wifi = request.POST.get('wifi', False) == 'on'
+            gym = request.POST.get('gym', False) == 'on'
+            pool = request.POST.get('pool', False) == 'on'
+            parking = request.POST.get('parking', False) == 'on'
+
             context = {
-                'available_hotels': Hotel.search(location, rooms_count, from_date, to_date),
+                'available_hotels': Hotel.search(location, rooms_count, from_date, to_date, breakfast, bar, wifi, gym, pool, parking),
                 'location': location,
                 'rooms_count': rooms_count
             }

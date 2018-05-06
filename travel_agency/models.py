@@ -38,14 +38,6 @@ class Location(models.Model):
 
     def __str__(self):
         return self.city
-
-class Travel(models.Model):
-    travel_id = models.IntegerField(primary_key=True)
-    user_id = models.IntegerField()
-    from_location = models.ForeignKey(Location, on_delete="DO_NOTHING", related_name='travel_from_location')
-    to_location = models.ForeignKey(Location, on_delete="DO_NOTHING", related_name='travel_to_location')
-    payment_id = models.IntegerField()
-    travel_date = models.DateField(default=datetime.now)
     
 class Search(models.Model):
     search_id = models.IntegerField(primary_key=True)
@@ -334,10 +326,10 @@ class Hotel(models.Model):
     to_date = models.DateTimeField(default=datetime.now)
     amenities = models.OneToOneField(Amenities, on_delete="CASCADE")
 
-    def search(location, rooms_count, from_date, to_date):
+    def search(location, rooms_count, from_date, to_date, breakfast, bar, wifi, gym, pool, parking):
         cursor = connection.cursor()
         try:
-            cursor.execute('''
+            query = '''
                 SELECT name, from_date, to_date, city, cost, available, hotel_id, breakfast, parking, fitness, pool, bar, wifi
                 FROM (
                     SELECT *
@@ -350,7 +342,21 @@ class Hotel(models.Model):
                         available >= %s AND
                         from_date <= %s AND
                         to_date >= %s
-            ''', (location, rooms_count, from_date, to_date))
+            '''
+            if breakfast:
+                query += 'AND breakfast = 1'
+            if bar:
+                query += 'AND bar = 1'
+            if pool:
+                query += 'AND pool = 1'
+            if wifi:
+                query += 'AND wifi = 1'
+            if parking:
+                query += 'AND parking = 1'
+            if gym:
+                query += 'AND gym = 1'
+                
+            cursor.execute(query, (location, rooms_count, from_date, to_date))
             results = [dict((cursor.description[i][0], value) \
                for i, value in enumerate(row)) for row in cursor.fetchall()]
         finally:

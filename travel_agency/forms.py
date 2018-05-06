@@ -68,6 +68,14 @@ class SettingsForm(forms.ModelForm):
 class HotelsForm(forms.ModelForm):
     location = forms.CharField(widget=forms.TextInput())
     rooms_count = forms.IntegerField(widget=forms.NumberInput())
+    breakfast = forms.BooleanField(widget=forms.CheckboxInput(), required=False)
+    parking = forms.BooleanField(widget=forms.CheckboxInput(), required=False)
+    pool = forms.BooleanField(widget=forms.CheckboxInput(), required=False)
+    gym = forms.BooleanField(widget=forms.CheckboxInput(), required=False)
+    bar = forms.BooleanField(widget=forms.CheckboxInput(), required=False)
+    wifi = forms.BooleanField(widget=forms.CheckboxInput(), required=False)
+
+
     class Meta:
         model = Hotel
         fields = ['from_date', 'to_date']
