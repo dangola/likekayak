@@ -3,26 +3,26 @@
     "model": "travel_agency.Hotel", 
     "pk": 1,
     "fields": {
-      "company" : 7,
-      "addr" : 1,
+      "company_id_id" : 7,
+      "addr_id_id" : 1,
       "cost" : 159,
       "available" : 25,
       "from_date" : "2018-04-20 17:30",
       "to_date" : "2018-05-20 17:30",
-      "amenities" : 1
+      "amenities_id" : 1
     }
   },
   {
     "model": "travel_agency.Hotel", 
     "pk": 2,
     "fields": {
-      "company" : 8,
-      "addr" : 2,
+      "company_id_id" : 8,
+      "addr_id_id" : 2,
       "cost" : 76,
       "available" : 10,
       "from_date" : "2018-04-20 17:30",
       "to_date" : "2018-05-20 17:30",
-      "amenities" : 2
+      "amenities_id" : 2
     }
   }
 ]

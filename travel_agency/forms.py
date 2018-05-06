@@ -39,7 +39,6 @@ class SearchForm(forms.ModelForm):
     review = forms.ChoiceField(choices=review_choices, required=False)
     non_stop = forms.BooleanField(widget=forms.CheckboxInput, required=False)
     one_stop = forms.BooleanField(widget=forms.CheckboxInput, required=False)
-    two_stop = forms.BooleanField(widget=forms.CheckboxInput, required=False)
     
     def clean(self):
         cleaned_data = self.cleaned_data

@@ -66,18 +66,21 @@ def flights(request):
             price = request.POST.get('price')
             time = request.POST.get('time')
             review = request.POST.get('sort')
-            non_stop = request.POST.get('non_stop', False)
-            one_stop = request.POST.get('one_stop', False)
-            two_stop = request.POST.get('two_stop', False)
+            non_stop = request.POST.get('non_stop', False) == 'on'
+            one_stop = request.POST.get('one_stop', False) == 'on'
+            two_stop = request.POST.get('two_stop', False) == 'on'
 
-            context['departure_flights'] = Flight.search(from_location, to_location, from_date, travelers_count, price, time, review)
+            if non_stop:
+                context['non_stop_departure_flights'] = Flight.search(from_location, to_location, from_date, travelers_count, price, time, review)
+            if one_stop:
+                context['one_stop_departure_flights'] = Flight.search_one_stop(from_location, to_location, from_date, travelers_count, price, time, review)
             context['to_location'] = to_location
             context['travelers_count'] = travelers_count
 
             if round_trip:
                 context['return_flights'] = Flight.search(to_location, from_location, to_date, travelers_count, price, time, review)
                 context['return_to_location'] = from_location
-            if context['departure_flights']:
+            if 'non_stop_departure_flights' in context or 'one_stop_departure_flights' in context:
                 if round_trip and not context['return_flights']:
                     return render(request, 'travel_agency/flights.html', {'error_message': 'Oops! We don\'t have any flights for that.'})  
                 else:
@@ -174,13 +177,13 @@ def purchase(request):
         if 'flight_id' in data and data['flight_id'] is not None:
             Flight.purchase(data['flight_id'], data['travelers_count'])
             if request.user.is_authenticated:
-                Orders.add_order(request.user, data['flight_id'], data['travelers_count'])
+                Orders.add_order(request.user, 'flight', data['flight_id'], data['travelers_count'])
             flight = Flight.get_flight(data['flight_id'])
             context = {'available': flight[0]['available']}
         elif 'car_id' in data and data['car_id'] is not None:
             Car.purchase(data['car_id'])
             if request.user.is_authenticated:
-                Orders.add_order(request.user, data['car_id'], 1)
+                Orders.add_order(request.user, 'car', data['car_id'], 1)
             car = Car.get_car(data['car_id'])
             context = {'available': car[0]['available']}
         return HttpResponse(json.dumps(context), content_type='application/json')

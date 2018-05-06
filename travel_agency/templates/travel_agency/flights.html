@@ -92,7 +92,8 @@ function purchase(id, travelers_count) {
     <div class="container-fluid">
         <h3>Departure Flights</h3>
     </div>
-    {% for flight in departure_flights %}
+    {% if non_stop_departure_flights %}
+    {% for flight in non_stop_departure_flights %}
         <div class="container-fluid">
             <div class="row">
                 <div class="col-sm-12 col-md-6">
@@ -118,6 +119,35 @@ function purchase(id, travelers_count) {
             </div>
         </div>
     {% endfor %}
+    {% endif %}
+    {% if one_stop_departure_flights %}
+    {% for flight in one_stop_departure_flights %}
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-sm-12 col-md-6">
+                    <div class="panel panel-default">
+                        <div class="panel-body">
+                            {{ flight.name }}
+                            Cost: ${% multiply flight.cost travelers_count %}
+                            {{ flight.flight_class }}
+                            {{ flight.city }}&rarr;{{ to_location }}
+                            {{ flight.from_date }}
+                            Available: <span id="avail {{flight.flight_id}}">{{ flight.available }}</span>
+                            <button type="button" class="btn btn-primary" onclick="select({{ flight.flight_id }})">Select</button>
+                            <div class="panel-body {{ flight.flight_id }}" style="display: none;">
+                                <form>
+                                    CC Number <input name="cc_num" type="text">
+                                    Security Code <input name="security_code" type="text">
+                                    <button type="button" class="btn btn-primary" onclick="purchase({{flight.flight_id}}, {{ travelers_count }})">Purchase</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+    {% endif %}
     {% if return_flights %}            
     <div class="container-fluid">
         <h3>Arrival Flights</h3>
