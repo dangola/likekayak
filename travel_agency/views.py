@@ -174,14 +174,13 @@ def purchase(request):
         if 'flight_id' in data and data['flight_id'] is not None:
             Flight.purchase(data['flight_id'], data['travelers_count'])
             if request.user.is_authenticated:
-                FlightOrders.add_order(request.user, data['flight_id'], data['travelers_count'])
+                Orders.add_order(request.user, data['flight_id'], data['travelers_count'])
             flight = Flight.get_flight(data['flight_id'])
             context = {'available': flight[0]['available']}
         elif 'car_id' in data and data['car_id'] is not None:
             Car.purchase(data['car_id'])
             if request.user.is_authenticated:
-                # FlightOrders.add_order(request.user, data['flight_id'], data['travelers_count'])
-                pass
+                Orders.add_order(request.user, data['car_id'], 1)
             car = Car.get_car(data['car_id'])
             context = {'available': car[0]['available']}
         return HttpResponse(json.dumps(context), content_type='application/json')
