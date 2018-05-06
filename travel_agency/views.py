@@ -150,11 +150,11 @@ def hotels(request):
                 'rooms_count': rooms_count
             }
             if context['available_hotels']:
-                return render(request, 'travel_agency/flights.html', context)
+                return render(request, 'travel_agency/hotels.html', context)
             else:
-                return render(request, 'travel_agency/flights.html', {'error_message': 'Oops! We don\'t have any rooms available for that.'})
+                return render(request, 'travel_agency/hotels.html', {'error_message': 'Oops! We don\'t have any rooms available for that.'})
         else:
-            return render(request, 'travel_agency/flights.html', {'error_message': form.errors.as_text})
+            return render(request, 'travel_agency/hotels.html', {'error_message': form.errors.as_text})
     
     context = {
         'form': form,
