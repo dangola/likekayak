@@ -2,12 +2,68 @@
 {% block title %}Cars{% endblock %}
 
 {% block body %}
+<script type="text/javascript">
+
+function getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie != '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = jQuery.trim(cookies[i]);
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+var csrftoken = getCookie('csrftoken');
+function csrfSafeMethod(method) {
+    // these HTTP methods do not require CSRF protection
+    return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+}
+$.ajaxSetup({
+    beforeSend: function(xhr, settings) {
+        if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+        }
+    }
+});
+function select(id) {
+    $.ajax({
+      url: '{% url "select" %}',
+      type: 'POST',
+      contentType: 'application/json',
+      data: JSON.stringify({ 'flight_id': id }),
+      dataType: "json",
+      success: function(resp) {
+        $("div.panel-body."+resp.flight_id).toggle();
+      }
+    })
+}
+function purchase(id, travelers_count) {
+    $.ajax({
+      url: '{% url "purchase" %}',
+      type: 'POST',
+      contentType: 'application/json',
+      data: JSON.stringify({ 'car_id': id }),
+      dataType: "json",
+      success: function(resp) {
+        $("[id='avail "+id+"']").replaceWith(resp.available);
+      }
+    })
+}
+
+</script>
+{% if form or error_message %}
 <div class="container-fluid">
     <div class="row">
         <div class="col-sm-12 col-md-6">
             <div class="panel panel-default">
                 <div class="panel-body">
-                    <h3>Seach for your vacation</h3>
+                    <h3>Seach for your cars</h3>
                     {% if error_message %}
                         <p><strong>{{ error_message }}</strong></p>
                     {% endif %}
@@ -25,4 +81,38 @@
         </div>
     </div>
 </div>
+{% else %}
+<div class="container-fluid">
+        <h3>Rent A Car</h3>
+    </div>
+    {% for car in cars %}
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-sm-12 col-md-6">
+                    <div class="panel panel-default">
+                        <div class="panel-body">
+                            Company: {{ car.name }}
+                            Cost: ${{ car.cost }}/hour
+                            {{ car.car_class }}
+                            Pickup Location: {{ pickup_location }}
+                            {% if dropoff_location %}
+                            Dropoff Location: {{ dropoff_location }}
+                            {% endif %}
+                            {{ flight.from_date }}
+                            Available: <span id="avail {{car.car_id}}">{{ car.available }}</span>
+                            <button type="button" class="btn btn-primary" onclick="select({{ car.car_id }})">Select</button>
+                            <div class="panel-body {{ car.car_id }}" style="display: none;">
+                                <form>
+                                    CC Number <input name="cc_num" type="text">
+                                    Security Code <input name="security_code" type="text">
+                                    <button type="button" class="btn btn-primary" onclick="purchase({{car.car_id}})">Purchase</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+{% endif %}
 {% endblock %}

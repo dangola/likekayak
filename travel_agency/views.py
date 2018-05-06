@@ -93,7 +93,28 @@ def flights(request):
     return render(request, 'travel_agency/flights.html', context)
 
 def cars(request):
-    return HttpResponse('temp')
+    form = CarSearchForm(request.POST or None)
+    if request.method == 'POST':
+        if form.is_valid():
+            from_date = request.POST['from_date']
+            to_date = request.POST['to_date']
+            pickup_location = request.POST['pickup_location']
+            dropoff_location = request.POST['dropoff_location']
+            price = request.POST.get('price')
+            review = request.POST.get('sort')
+
+            context = { 
+                'cars': Car.search(pickup_location, dropoff_location, from_date, to_date, price, review),
+                'pickup_location': pickup_location,
+                'dropoff_location': dropoff_location
+            }
+
+            return render(request, 'travel_agency/cars.html', context)
+        return render(request, 'travel_agency/cars.html', {'error_message': form.errors.as_text})
+    context = {
+        'form': form,
+    }
+    return render(request, 'travel_agency/cars.html', context)
 
 def settings(request):
     form = SettingsForm()
@@ -124,11 +145,21 @@ def select(request):
 def purchase(request):
     if request.method == 'POST':
         data = json.loads(request.body)
-        Flight.purchase(data['flight_id'], data['travelers_count'])
-        if request.user.is_authenticated:
-            FlightOrders.add_order(request.user, data['flight_id'], data['travelers_count'])
-        flight = Flight.get_flight(data['flight_id'])
-        return HttpResponse(json.dumps({'available': flight[0]['available']}), content_type='application/json')
+        context = { }
+        if 'flight_id' in data and data['flight_id'] is not None:
+            Flight.purchase(data['flight_id'], data['travelers_count'])
+            if request.user.is_authenticated:
+                FlightOrders.add_order(request.user, data['flight_id'], data['travelers_count'])
+            flight = Flight.get_flight(data['flight_id'])
+            context = {'available': flight[0]['available']}
+        elif 'car_id' in data and data['car_id'] is not None:
+            Car.purchase(data['car_id'])
+            if request.user.is_authenticated:
+                # FlightOrders.add_order(request.user, data['flight_id'], data['travelers_count'])
+                pass
+            car = Car.get_car(data['car_id'])
+            context = {'available': car[0]['available']}
+        return HttpResponse(json.dumps(context), content_type='application/json')
 
 def orders(request):
     context = {

@@ -168,6 +168,71 @@ class Car(models.Model):
     confirmation_id = models.IntegerField()
     car_class = models.CharField(max_length=10, choices=CLASS_CHOICES)
 
+    def search(pickup_location, dropoff_location, from_date, to_date, price, review):
+        cursor = connection.cursor()
+        try:
+            query = '''
+            SELECT name, car_id, car_class, confirmation_id, available, cost, from_date, to_date 
+            FROM (
+                SELECT *
+                FROM travel_agency_car
+                INNER JOIN travel_agency_location 
+                ON travel_agency_car.from_location_id=travel_agency_location.location_id
+                INNER JOIN travel_agency_company
+                ON travel_agency_car.company_id=travel_agency_company.company_id
+            )
+            WHERE city=%s 
+                AND available >= 1 
+                AND from_date LIKE %s 
+                AND to_date >= %s
+                AND to_location_id = (
+                    SELECT location_id 
+                    FROM travel_agency_location 
+                    WHERE city = %s
+                ) 
+            '''
+            if int(price) == 1:
+                print(price)
+                query += " ORDER BY cost "
+            elif int(price) == 2:
+                query += " ORDER BY cost DESC "
+
+            cursor.execute(query, (pickup_location, from_date+'%', to_date, dropoff_location))
+            results = [dict((cursor.description[i][0], value) \
+               for i, value in enumerate(row)) for row in cursor.fetchall()]
+        finally:
+            connection.close()
+
+        return results
+
+    def get_car(car_id):
+        cursor = connection.cursor()
+        try:
+            query = '''
+                SELECT * 
+                FROM travel_agency_car
+                WHERE travel_agency_car.car_id = %s
+            '''
+            cursor.execute(query, (car_id,))
+            results = [dict((cursor.description[i][0], value) \
+               for i, value in enumerate(row)) for row in cursor.fetchall()]
+        finally:
+            connection.close()
+
+        return results
+
+    def purchase(car_id):
+        cursor = connection.cursor()
+        try:
+            query = '''
+                UPDATE travel_agency_car
+                SET available=available-1
+                WHERE car_id=%s
+            '''
+            cursor.execute(query, (car_id,))
+        finally:
+            connection.close()
+
 class Cruise(models.Model):
     number = models.CharField(max_length=5, default=00000)
     company = models.ForeignKey(Company, on_delete="DO_NOTHING", default=1)

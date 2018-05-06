@@ -21,12 +21,7 @@
           <li><a href="#">Hotels</a></li>
           <li><a href="{% url 'cars' %}">Car Rentals</a></li>
           <li><a href="{% url 'packages' %}">Packages</a></li>
-          <li>
-          	<a href="#">
-          		<span class="glyphicon glyphicon-shopping-cart"></span>
-          		&nbsp;Cart
-          	</a>
-          	</li>
+          <li><a href="#">Reviews</a></li>
           <li>
             {% if user.is_authenticated %}
               <div class="dropdown" style="padding-top: 8px; padding-right: 4px;">
