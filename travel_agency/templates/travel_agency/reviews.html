@@ -1,0 +1,45 @@
+{% extends 'travel_agency/base.html' %}
+{% block title %}Review of a Company{% endblock %}
+
+{% block body %}
+{% if reviews %}
+<h3>{{ review.name }}</h3>
+{% for review in reviews %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-12 col-md-6">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <div class="panel-body">
+                    Written on: {{ review.date }}
+                    </div>
+                    <div class="panel-body">
+                    Rating: {{ review.rating }}
+                    </div>
+                    <div class="panel-body">
+                        {{ review.content }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+{% endif %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-12 col-md-6">
+            <div class="panel panel-default">
+                <div class="panel-body">                    
+                    {% if error_message %}
+                        <p><strong>{{ error_message }}</strong></p>
+                    {% endif%}
+                        <div class="col-sm-offset-2 col-sm-10">
+                            Have you travelled with them? Write them a review! <a class="btn btn-success" href="{% url 'review' %}">Review</a>
+                        </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

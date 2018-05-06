@@ -65,20 +65,19 @@ def flights(request):
             round_trip = request.POST.get('round_trip', False)
             price = request.POST.get('price')
             time = request.POST.get('time')
-            review = request.POST.get('sort')
             non_stop = request.POST.get('non_stop', False) == 'on'
             one_stop = request.POST.get('one_stop', False) == 'on'
             two_stop = request.POST.get('two_stop', False) == 'on'
 
             if non_stop:
-                context['non_stop_departure_flights'] = Flight.search(from_location, to_location, from_date, travelers_count, price, time, review)
+                context['non_stop_departure_flights'] = Flight.search(from_location, to_location, from_date, travelers_count, price, time)
             if one_stop:
-                context['one_stop_departure_flights'] = Flight.search_one_stop(from_location, to_location, from_date, travelers_count, price, time, review)
+                context['one_stop_departure_flights'] = Flight.search_one_stop(from_location, to_location, from_date, travelers_count, price, time)
             context['to_location'] = to_location
             context['travelers_count'] = travelers_count
 
             if round_trip:
-                context['return_flights'] = Flight.search(to_location, from_location, to_date, travelers_count, price, time, review)
+                context['return_flights'] = Flight.search(to_location, from_location, to_date, travelers_count, price, time)
                 context['return_to_location'] = from_location
             if 'non_stop_departure_flights' in context or 'one_stop_departure_flights' in context:
                 if round_trip and not context['return_flights']:
@@ -104,10 +103,9 @@ def cars(request):
             pickup_location = request.POST['pickup_location']
             dropoff_location = request.POST['dropoff_location']
             price = request.POST.get('price')
-            review = request.POST.get('sort')
 
             context = { 
-                'cars': Car.search(pickup_location, dropoff_location, from_date, to_date, price, review),
+                'cars': Car.search(pickup_location, dropoff_location, from_date, to_date, price),
                 'pickup_location': pickup_location,
                 'dropoff_location': dropoff_location
             }
@@ -162,7 +160,7 @@ def hotels(request):
     context = {
         'form': form,
     }
-    return render(request, 'travel_agency/hotels.html', context)
+    return render(request, 'travel_agency/flights.html', context)
 
 def select(request):
     if request.method == 'POST':
@@ -208,3 +206,31 @@ def orders(request):
         'orders': Orders.get_orders(request.user)
     }
     return render(request, 'travel_agency/orders.html', context)
+
+def review(request):
+    form = ReviewForm(request.POST or None)
+    if request.method == 'POST':
+        if not request.user.is_authenticated:
+            return render(request, 'travel_agency/review.html', {'error_message': 'You need to be logged in to post a review.'})
+
+        content = request.POST['content']
+        rating = form.save(commit=False)
+        rating.user_id = request.user
+        rating.rating = request.POST['rating']
+        rating.company_id = Company.objects.get(company_id=request.POST['company'])
+        rating.save()
+        return render(request, 'travel_agency/review.html', {})
+    context = {
+        'form': form
+    }
+    return render(request, 'travel_agency/review.html', context)
+
+def review_company(request, company_name):
+    context = {
+        'reviews': Review.get_reviews(company_name)
+    }
+    print(context['reviews'])
+    if context['reviews']:
+        return render(request, 'travel_agency/reviews.html', context)
+    else:
+        return render(request, 'travel_agency/reviews.html', {'error_message': 'Sorry! This company has no reviews!'})

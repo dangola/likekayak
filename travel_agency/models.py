@@ -60,6 +60,24 @@ class Company(models.Model):
     company_id = models.IntegerField(primary_key=True)
     name = models.CharField(max_length=256)
 
+    def __str__(self):
+        return self.name
+
+    def get_company(company_id):
+        cursor = connection.cursor()
+        try:
+            query = '''
+                SELECT *
+                FROM travel_agency_company
+                WHERE company_id=%s
+            '''
+            cursor.execute(query, (company_id,))
+            result = cursor.fetchone()
+        finally:
+            connection.close()
+
+        return result
+
 class Flight(models.Model):
     CLASS_CHOICES = (
         ('ECONOMY', 'economy'),
@@ -78,7 +96,7 @@ class Flight(models.Model):
     flight_id = models.IntegerField(primary_key=True)
     flight_class = models.CharField(max_length=10, choices=CLASS_CHOICES)
    
-    def search(from_location, to_location, date, travelers_count, price, time, review):
+    def search(from_location, to_location, date, travelers_count, price, time):
         cursor = connection.cursor()
         try:
             query = '''
@@ -118,7 +136,7 @@ class Flight(models.Model):
 
         return results
 
-    def search_one_stop(from_location, to_location, date, travelers_count, price, time, review):
+    def search_one_stop(from_location, to_location, date, travelers_count, price, time):
         cursor = connection.cursor()
         try:
             query = '''
@@ -221,7 +239,7 @@ class Car(models.Model):
     confirmation_id = models.IntegerField()
     car_class = models.CharField(max_length=10, choices=CLASS_CHOICES)
 
-    def search(pickup_location, dropoff_location, from_date, to_date, price, review):
+    def search(pickup_location, dropoff_location, from_date, to_date, price):
         cursor = connection.cursor()
         try:
             query = '''
@@ -375,6 +393,24 @@ class Review(models.Model):
     content = models.CharField(max_length=256)
     rating = models.IntegerField()
     date = models.DateField(default=datetime.now)
+
+    def get_reviews(company_name):
+        cursor = connection.cursor()
+        try:
+            query = '''
+                SELECT *
+                FROM travel_agency_review
+                INNER JOIN travel_agency_company
+                ON travel_agency_review.company_id_id=travel_agency_company.company_id
+                WHERE name=%s
+            '''
+            cursor.execute(query, (company_name,))
+            results = [dict((cursor.description[i][0], value) \
+               for i, value in enumerate(row)) for row in cursor.fetchall()]
+        finally:
+            connection.close()
+
+        return results
 
 class Orders(models.Model):
     TYPE_CHOICES = (

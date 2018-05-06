@@ -20,7 +20,7 @@
           <li><a href="#">Cruises</a></li>
           <li><a href="{% url 'hotels' %}">Hotels</a></li>
           <li><a href="{% url 'cars' %}">Car Rentals</a></li>
-          <li><a href="#">Reviews</a></li>
+          <li><a href="{% url 'review' %}">Reviews</a></li>
           <li>
             {% if user.is_authenticated %}
               <div class="dropdown" style="padding-top: 8px; padding-right: 4px;">

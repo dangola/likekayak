@@ -1,0 +1,49 @@
+{% extends 'travel_agency/base.html' %}
+{% block title %}Review{% endblock %}
+
+{% block body %}
+{% if form %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-12 col-md-6">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <h3>Review a company</h3>
+                    {% if error_message %}
+                        <p><strong>{{ error_message }}</strong></p>
+                            <div class="col-sm-offset-2 col-sm-10">
+                                <a class="btn btn-success" href="{% url 'review' %}">Go back</a>
+                            </div>
+                    {% else %}
+                    <form class="form-horizontal" role="form" action="" method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        {% include 'travel_agency/form_template.html' %}
+                        <div class="form-group">
+                            <div class="col-sm-offset-2 col-sm-10">
+                                <button type="submit" class="btn btn-success">Submit</button>
+                            </div>
+                        </div>
+                    </form>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% else %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-12 col-md-6">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <h3>Thanks for posting a review!</h3>
+                        <div class="col-sm-offset-2 col-sm-10">
+                            <a class="btn btn-success" href="{% url 'review' %}">Go back</a>
+                        </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

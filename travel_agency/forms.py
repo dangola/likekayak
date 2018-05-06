@@ -31,12 +31,6 @@ class SearchForm(forms.ModelForm):
         (2, _("Longest->Shortest"))
     )
     time = forms.ChoiceField(choices=time_choices, required=False)
-    review_choices = (
-        (0, _("None")),
-        (1, _("Lowest Ratings")),
-        (2, _("Highest Ratings"))
-    )
-    review = forms.ChoiceField(choices=review_choices, required=False)
     non_stop = forms.BooleanField(widget=forms.CheckboxInput, required=False)
     one_stop = forms.BooleanField(widget=forms.CheckboxInput, required=False)
     
@@ -65,13 +59,7 @@ class CarSearchForm(forms.Form):
         (2, _("$$$->$"))
     )
     price = forms.ChoiceField(choices=price_choices, required=False)
-    review_choices = (
-        (0, _("None")),
-        (1, _("Lowest Ratings")),
-        (2, _("Highest Ratings"))
-    )
-    review = forms.ChoiceField(choices=review_choices, required=False)
-
+   
 class SettingsForm(forms.ModelForm):
     class Meta:
         model = Profile
@@ -88,3 +76,13 @@ class HotelsForm(forms.ModelForm):
             'to_date': DateInput()
         }
 
+class ReviewForm(forms.ModelForm):
+    company = forms.ModelChoiceField(queryset=Company.objects.all())
+    rating = forms.ChoiceField(widget=forms.RadioSelect(attrs={'class': 'star'}), choices=(('1', '1'), ('2', '2'), ('3', '3'), ('4', '4'), ('5', '5'),))
+
+    class Meta:
+        model = Review
+        fields = ['content']
+        widgets = {
+          'content': forms.Textarea(attrs={'rows':10, 'cols':70}),
+        }
