@@ -3,7 +3,7 @@
     "model": "travel_agency.Profile", 
     "pk": 1,
     "fields": {
-      "user_id": 6,
+      "user_id": 1,
       "first_name": "John",
       "last_name": "Lennon",
       "home_addr": null,

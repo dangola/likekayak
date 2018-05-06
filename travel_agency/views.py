@@ -162,7 +162,7 @@ def hotels(request):
     context = {
         'form': form,
     }
-    return render(request, 'travel_agency/flights.html', context)
+    return render(request, 'travel_agency/hotels.html', context)
 
 def select(request):
     if request.method == 'POST':

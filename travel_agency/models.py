@@ -320,7 +320,7 @@ class Hotel(models.Model):
         cursor = connection.cursor()
         try:
             cursor.execute('''
-                SELECT company_id, from_date, to_date, city, cost, available, hotel_id, breakfast, parking, fitness, pool, bar, wifi
+                SELECT name, from_date, to_date, city, cost, available, hotel_id, breakfast, parking, fitness, pool, bar, wifi
                 FROM (
                     SELECT *
                     FROM travel_agency_hotel
