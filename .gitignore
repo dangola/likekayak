@@ -4,6 +4,7 @@ travel_agency/migrations/__pycache__/
 travel_agency/__pycache__/
 travel_agency/.DS_Store
 desktop.ini
+db.sqlite3
 travel_agency/templatetags/__pycache__/
 kdad/__pycache__/__init__.cpython-36.pyc
 kdad/__pycache__/settings.cpython-36.pyc
