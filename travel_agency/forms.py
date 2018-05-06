@@ -36,3 +36,14 @@ class SettingsForm(forms.ModelForm):
     class Meta:
         model = Profile
         fields = ['first_name', 'last_name', 'home_addr', 'billing_addr', 'payment_method', 'email']
+
+class HotelsForm(forms.ModelForm):
+    location = forms.CharField(widget=forms.TextInput())
+    rooms_count = forms.IntegerField(widget=forms.NumberInput())
+    class Meta:
+        model = Hotel
+        fields = ['from_date', 'to_date']
+        widgets = {
+            'from_date': DateInput(),
+            'to_date': DateInput()
+        }

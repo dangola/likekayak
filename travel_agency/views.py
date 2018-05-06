@@ -107,3 +107,28 @@ def packages(request):
         'form': form,
     }
     return render(request, 'travel_agency/packages.html', context)
+
+def hotels(request):
+    form = HotelsForm(request.POST or None)
+    if request.method == 'POST':
+        if form.is_valid():
+            location = request.POST['location']
+            rooms_count = request.POST['rooms_count']
+            from_date = request.POST['from_date']
+            to_date = request.POST['to_date']
+            context = {
+                'available_hotels': Hotel.search(location, rooms_count, from_date, to_date),
+                'location': location,
+                'rooms_count': rooms_count
+            }
+            if context['available_hotels']:
+                return render(request, 'travel_agency/flights.html', context)
+            else:
+                return render(request, 'travel_agency/flights.html', {'error_message': 'Oops! We don\'t have any rooms available for that.'})
+        else:
+            return render(request, 'travel_agency/flights.html', {'error_message': form.errors.as_text})
+    
+    context = {
+        'form': form,
+    }
+    return render(request, 'travel_agency/flights.html', context)

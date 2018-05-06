@@ -145,13 +145,36 @@ class Amenities(models.Model):
 
 class Hotel(models.Model):
     hotel_id = models.IntegerField(primary_key=True)
-    company = models.ForeignKey(Company, on_delete="DO_NOTHING", default=1)
-    addr = models.OneToOneField(Address, on_delete="CASCADE")
+    company_id = models.ForeignKey(Company, on_delete="DO_NOTHING", default=1)
+    addr_id = models.OneToOneField(Address, on_delete="CASCADE")
     cost = models.IntegerField(default=0)
     available = models.IntegerField(default=0)
     from_date = models.DateTimeField(default=datetime.now)
     to_date = models.DateTimeField(default=datetime.now)
     amenities = models.OneToOneField(Amenities, on_delete="CASCADE")
+
+    def search(location, rooms_count, from_date, to_date):
+        cursor = connection.cursor()
+        try:
+            cursor.execute('''
+                SELECT company_id, from_date, to_date, city, state, cost
+                FROM (
+                    SELECT *
+                    FROM travel_agency_hotel
+                    INNER JOIN travel_agency_address ON travel_agency_hotel.addr_id=travel_agency_address.address_id
+                    INNER JOIN travel_agency_company ON travel_agency_hotel.company_id=travel_agency_company.company_id
+                )
+                WHERE   city=%s AND
+                        available >= %s AND
+                        from_date <= %s AND
+                        to_date >= %s
+            ''', (location, rooms_count, from_date, to_date))
+            results = [dict((cursor.description[i][0], value) \
+               for i, value in enumerate(row)) for row in cursor.fetchall()]
+        finally:
+            connection.close()
+
+        return results
 
 class Review(models.Model):
     review_id = models.IntegerField(primary_key=True)
