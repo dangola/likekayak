@@ -78,11 +78,11 @@ class Flight(models.Model):
     flight_id = models.IntegerField(primary_key=True)
     flight_class = models.CharField(max_length=10, choices=CLASS_CHOICES)
    
-    def search(from_location, to_location, date, travelers_count):
+    def search(from_location, to_location, date, travelers_count, price, time, review):
         cursor = connection.cursor()
         try:
-            cursor.execute('''
-                SELECT name, from_date, flight_class, city, state, cost
+            query = '''
+                SELECT flight_id, name, from_date, flight_class, city, state, cost, available
                 FROM (
                     SELECT *
                     FROM travel_agency_flight
@@ -91,15 +91,60 @@ class Flight(models.Model):
                 )
                 WHERE   city=%s AND
                         available >= %s AND
-                        from_date LIKE %sand
-                        to_location_id = (SELECT location_id FROM travel_agency_location WHERE city = %s)
-            ''', (from_location, travelers_count, date+'%', to_location))
+                        from_date LIKE %s AND
+                        to_location_id = (SELECT location_id FROM travel_agency_location WHERE city = %s) 
+            '''
+            if int(price) == 1:
+                print(price)
+                query += " ORDER BY cost "
+            elif int(price) == 2:
+                query += " ORDER BY cost DESC "
+            if int(time) == 1:
+                if "ORDER BY" not in query:
+                    query += " ORDER BY to_date-from_date "
+                else:
+                    query += ", to_date-from_date"
+            elif int(time) == 2:
+                if "ORDER BY" not in query:
+                    query += " ORDER BY to_date-from_date DESC "
+                else:
+                    query += ", to_date-from_date DESC"
+
+            cursor.execute(query, (from_location, travelers_count, date+'%', to_location))
             results = [dict((cursor.description[i][0], value) \
                for i, value in enumerate(row)) for row in cursor.fetchall()]
         finally:
             connection.close()
 
         return results
+
+    def get_flight(flight_id):
+        cursor = connection.cursor()
+        try:
+            query = '''
+                SELECT * 
+                FROM travel_agency_flight
+                WHERE travel_agency_flight.flight_id = %s
+            '''
+            cursor.execute(query, (flight_id,))
+            results = [dict((cursor.description[i][0], value) \
+               for i, value in enumerate(row)) for row in cursor.fetchall()]
+        finally:
+            connection.close()
+
+        return results
+
+    def purchase(flight_id, travelers_count):
+        cursor = connection.cursor()
+        try:
+            query = '''
+                UPDATE travel_agency_flight
+                SET available=available-%s
+                WHERE flight_id=%s
+            '''
+            cursor.execute(query, (travelers_count, flight_id))
+        finally:
+            connection.close()
 
 class Car(models.Model):
     CLASS_CHOICES = (
@@ -122,6 +167,71 @@ class Car(models.Model):
     car_id = models.IntegerField(primary_key=True)
     confirmation_id = models.IntegerField()
     car_class = models.CharField(max_length=10, choices=CLASS_CHOICES)
+
+    def search(pickup_location, dropoff_location, from_date, to_date, price, review):
+        cursor = connection.cursor()
+        try:
+            query = '''
+            SELECT name, car_id, car_class, confirmation_id, available, cost, from_date, to_date 
+            FROM (
+                SELECT *
+                FROM travel_agency_car
+                INNER JOIN travel_agency_location 
+                ON travel_agency_car.from_location_id=travel_agency_location.location_id
+                INNER JOIN travel_agency_company
+                ON travel_agency_car.company_id=travel_agency_company.company_id
+            )
+            WHERE city=%s 
+                AND available >= 1 
+                AND from_date LIKE %s 
+                AND to_date >= %s
+                AND to_location_id = (
+                    SELECT location_id 
+                    FROM travel_agency_location 
+                    WHERE city = %s
+                ) 
+            '''
+            if int(price) == 1:
+                print(price)
+                query += " ORDER BY cost "
+            elif int(price) == 2:
+                query += " ORDER BY cost DESC "
+
+            cursor.execute(query, (pickup_location, from_date+'%', to_date, dropoff_location))
+            results = [dict((cursor.description[i][0], value) \
+               for i, value in enumerate(row)) for row in cursor.fetchall()]
+        finally:
+            connection.close()
+
+        return results
+
+    def get_car(car_id):
+        cursor = connection.cursor()
+        try:
+            query = '''
+                SELECT * 
+                FROM travel_agency_car
+                WHERE travel_agency_car.car_id = %s
+            '''
+            cursor.execute(query, (car_id,))
+            results = [dict((cursor.description[i][0], value) \
+               for i, value in enumerate(row)) for row in cursor.fetchall()]
+        finally:
+            connection.close()
+
+        return results
+
+    def purchase(car_id):
+        cursor = connection.cursor()
+        try:
+            query = '''
+                UPDATE travel_agency_car
+                SET available=available-1
+                WHERE car_id=%s
+            '''
+            cursor.execute(query, (car_id,))
+        finally:
+            connection.close()
 
 class Cruise(models.Model):
     number = models.CharField(max_length=5, default=00000)
@@ -183,3 +293,71 @@ class Review(models.Model):
     content = models.CharField(max_length=256)
     rating = models.IntegerField()
     date = models.DateField(default=datetime.now)
+
+class Orders(models.Model):
+    TYPE_CHOICES = (
+        ('FLIGHT', 'flight'),
+        ('CRUISE', 'cruise'),
+        ('CAR', 'car'),
+        ('HOTEL', 'hotel')
+    )
+    order_id = models.IntegerField(primary_key=True)
+    user_id = models.OneToOneField(User, unique=False, on_delete="DO_NOTHING")
+    order_type = models.CharField(max_length=6, choices=TYPE_CHOICES)
+    order_type_id = models.IntegerField(unique=False)
+    travelers_count = models.IntegerField(unique=False)
+
+    def get_orders(user):
+        cursor = connection.cursor()
+        try:
+            query = '''
+                SELECT cost, flight_class, from_date, to_date, name, a.city as from_city, b.city as to_city, travelers_count
+                FROM travel_agency_flight
+                INNER JOIN travel_agency_orders ON
+                travel_agency_flight.flight_id = travel_agency_orders.order_type_id
+                INNER JOIN travel_agency_company ON 
+                travel_agency_flight.company_id=travel_agency_company.company_id
+                INNER JOIN travel_agency_location a ON
+                travel_agency_flight.from_location_id=a.location_id
+                INNER JOIN travel_agency_location b ON
+                travel_agency_flight.to_location_id=b.location_id
+                WHERE user_id_id = 
+                (SELECT id FROM auth_user WHERE username=%s)
+                AND order_type='flight'
+            '''
+            cursor.execute(query, (str(user),))
+            results = [dict((cursor.description[i][0], value) \
+               for i, value in enumerate(row)) for row in cursor.fetchall()]
+            query = '''
+                SELECT cost, car_class, from_date, to_date, name, a.city as from_city, b.city as to_city, available
+                FROM travel_agency_car
+                INNER JOIN travel_agency_orders ON
+                travel_agency_car.car_id = travel_agency_orders.order_type_id
+                INNER JOIN travel_agency_company ON 
+                travel_agency_car.company_id=travel_agency_company.company_id
+                INNER JOIN travel_agency_location a ON
+                travel_agency_car.from_location_id=a.location_id
+                INNER JOIN travel_agency_location b ON
+                travel_agency_car.to_location_id=b.location_id
+                WHERE user_id_id = 
+                (SELECT id FROM auth_user WHERE username=%s)
+                AND order_type = 'car'
+            '''
+            cursor.execute(query, (str(user),))
+            results += [dict((cursor.description[i][0], value) \
+               for i, value in enumerate(row)) for row in cursor.fetchall()]
+        finally:
+            connection.close()
+
+        return results
+
+    def add_order(user, order_type, order_type_id, travelers_count):
+        cursor = connection.cursor()
+        try:
+            query = '''
+                INSERT INTO travel_agency_orders (order_type, order_type_id, travelers_count, user_id_id)
+                VALUES (%s, %s, %s, (SELECT id FROM auth_user WHERE username=%s))
+            '''
+            cursor.execute(query, (str(order_type), int(order_id), str(user), int(travelers_count),))
+        finally:
+            connection.close()

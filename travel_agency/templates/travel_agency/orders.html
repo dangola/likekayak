@@ -1,0 +1,28 @@
+{% extends 'travel_agency/base.html' %}
+{% block title %}Orders{% endblock %}
+
+{% block body %}
+
+<div class="container-fluid">
+    <h3>Your Orders</h3>
+</div>
+{% for order in orders %}
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-12 col-md-6">
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        Company: {{ order.name }}
+                        Cost: ${{ order.cost }}
+                        Quantity: {{ order.travelers_count }}
+                        {{ order.flight_class }}
+                        {{ order.from_city }}&rarr;{{ order.to_city }}
+                        {{ order.from_date }}-{{ order.to_date }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endfor %}
+
+{% endblock %}

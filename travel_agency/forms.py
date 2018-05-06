@@ -1,6 +1,7 @@
 from django.contrib.auth.models import User
 from django import forms
 from .models import *
+from django.utils.translation import gettext as _
 
 
 class DateInput(forms.DateInput):
@@ -18,7 +19,28 @@ class SearchForm(forms.ModelForm):
     to_location = forms.CharField(widget=forms.TextInput())
     travelers_count = forms.IntegerField(widget=forms.NumberInput())
     round_trip = forms.BooleanField(widget=forms.CheckboxInput(), required=False)
-
+    price_choices = (
+        (0, _("None")),
+        (1, _("$->$$$")),
+        (2, _("$$$->$"))
+    )
+    price = forms.ChoiceField(choices=price_choices, required=False)
+    time_choices = (
+        (0, _("None")),
+        (1, _("Shortest->Longest")),
+        (2, _("Longest->Shortest"))
+    )
+    time = forms.ChoiceField(choices=time_choices, required=False)
+    review_choices = (
+        (0, _("None")),
+        (1, _("Lowest Ratings")),
+        (2, _("Highest Ratings"))
+    )
+    review = forms.ChoiceField(choices=review_choices, required=False)
+    non_stop = forms.BooleanField(widget=forms.CheckboxInput, required=False)
+    one_stop = forms.BooleanField(widget=forms.CheckboxInput, required=False)
+    two_stop = forms.BooleanField(widget=forms.CheckboxInput, required=False)
+    
     def clean(self):
         cleaned_data = self.cleaned_data
         if cleaned_data.get('travelers_count') < 1:
@@ -31,6 +53,25 @@ class SearchForm(forms.ModelForm):
             'from_date': DateInput(),
             'to_date': DateInput()
         }
+
+class CarSearchForm(forms.Form):
+    from_date =  forms.DateField(widget=DateInput())
+    to_date =  forms.DateField(widget=DateInput())
+    pickup_location = forms.CharField(widget=forms.TextInput())
+    dropoff_location = forms.CharField(widget=forms.TextInput())
+    same_drop_off = forms.BooleanField(widget=forms.CheckboxInput(), required=False)
+    price_choices = (
+        (0, _("None")),
+        (1, _("$->$$$")),
+        (2, _("$$$->$"))
+    )
+    price = forms.ChoiceField(choices=price_choices, required=False)
+    review_choices = (
+        (0, _("None")),
+        (1, _("Lowest Ratings")),
+        (2, _("Highest Ratings"))
+    )
+    review = forms.ChoiceField(choices=review_choices, required=False)
 
 class SettingsForm(forms.ModelForm):
     class Meta:
@@ -47,3 +88,4 @@ class HotelsForm(forms.ModelForm):
             'from_date': DateInput(),
             'to_date': DateInput()
         }
+
