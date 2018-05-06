@@ -163,6 +163,6 @@ def purchase(request):
 
 def orders(request):
     context = {
-        'orders': FlightOrders.get_orders(request.user)
+        'orders': Orders.get_orders(request.user)
     }
     return render(request, 'travel_agency/orders.html', context)

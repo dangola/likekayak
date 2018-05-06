@@ -271,10 +271,17 @@ class Review(models.Model):
     rating = models.IntegerField()
     date = models.DateField(default=datetime.now)
 
-class FlightOrders(models.Model):
+class Orders(models.Model):
+    TYPE_CHOICES = (
+        ('FLIGHT', 'flight'),
+        ('CRUISE', 'cruise'),
+        ('CAR', 'car'),
+        ('HOTEL', 'hotel')
+    )
     order_id = models.IntegerField(primary_key=True)
     user_id = models.OneToOneField(User, unique=False, on_delete="DO_NOTHING")
-    flight_id = models.ForeignKey(Flight, unique=False, on_delete="DO_NOTHING")
+    order_type = models.CharField(max_length=6, choices=TYPE_CHOICES)
+    order_type_id = models.IntegerField(unique=False)
     travelers_count = models.IntegerField(unique=False)
 
     def get_orders(user):
@@ -283,8 +290,8 @@ class FlightOrders(models.Model):
             query = '''
                 SELECT cost, flight_class, from_date, to_date, name, a.city as from_city, b.city as to_city, travelers_count
                 FROM travel_agency_flight
-                INNER JOIN travel_agency_flightorders ON
-                travel_agency_flight.flight_id = travel_agency_flightorders.flight_id_id
+                INNER JOIN travel_agency_orders ON
+                travel_agency_flight.flight_id = travel_agency_orders.order_type_id
                 INNER JOIN travel_agency_company ON 
                 travel_agency_flight.company_id=travel_agency_company.company_id
                 INNER JOIN travel_agency_location a ON
@@ -293,22 +300,41 @@ class FlightOrders(models.Model):
                 travel_agency_flight.to_location_id=b.location_id
                 WHERE user_id_id = 
                 (SELECT id FROM auth_user WHERE username=%s)
+                AND order_type='flight'
             '''
             cursor.execute(query, (str(user),))
             results = [dict((cursor.description[i][0], value) \
+               for i, value in enumerate(row)) for row in cursor.fetchall()]
+            query = '''
+                SELECT cost, car_class, from_date, to_date, name, a.city as from_city, b.city as to_city, available
+                FROM travel_agency_car
+                INNER JOIN travel_agency_orders ON
+                travel_agency_car.car_id = travel_agency_orders.order_type_id
+                INNER JOIN travel_agency_company ON 
+                travel_agency_car.company_id=travel_agency_company.company_id
+                INNER JOIN travel_agency_location a ON
+                travel_agency_car.from_location_id=a.location_id
+                INNER JOIN travel_agency_location b ON
+                travel_agency_car.to_location_id=b.location_id
+                WHERE user_id_id = 
+                (SELECT id FROM auth_user WHERE username=%s)
+                AND order_type = 'car'
+            '''
+            cursor.execute(query, (str(user),))
+            results += [dict((cursor.description[i][0], value) \
                for i, value in enumerate(row)) for row in cursor.fetchall()]
         finally:
             connection.close()
 
         return results
 
-    def add_order(user, flight_id, travelers_count):
+    def add_order(user, order_type, order_type_id, travelers_count):
         cursor = connection.cursor()
         try:
             query = '''
-                INSERT INTO travel_agency_flightorders (user_id_id, flight_id_id, travelers_count)
-                VALUES ((SELECT id FROM auth_user WHERE username=%s), %s, %s)
+                INSERT INTO travel_agency_orders (order_type, order_type_id, travelers_count, user_id_id)
+                VALUES (%s, %s, %s, (SELECT id FROM auth_user WHERE username=%s))
             '''
-            cursor.execute(query, (str(user), int(flight_id), int(travelers_count),))
+            cursor.execute(query, (str(order_type), int(order_id), str(user), int(travelers_count),))
         finally:
             connection.close()
