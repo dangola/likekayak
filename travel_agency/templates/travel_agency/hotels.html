@@ -3,6 +3,61 @@
 {% block title %}Hotels{% endblock %}
 
 {% block body %}
+<script type="text/javascript">
+
+function getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie != '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = jQuery.trim(cookies[i]);
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+var csrftoken = getCookie('csrftoken');
+function csrfSafeMethod(method) {
+    // these HTTP methods do not require CSRF protection
+    return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+}
+$.ajaxSetup({
+    beforeSend: function(xhr, settings) {
+        if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+        }
+    }
+});
+function select(id) {
+    $.ajax({
+      url: '{% url "select" %}',
+      type: 'POST',
+      contentType: 'application/json',
+      data: JSON.stringify({ 'hotel_id': id }),
+      dataType: "json",
+      success: function(resp) {
+        $("div.panel-body."+resp.hotel_id).toggle();
+      }
+    })
+}
+function purchase(id) {
+    $.ajax({
+      url: '{% url "purchase" %}',
+      type: 'POST',
+      contentType: 'application/json',
+      data: JSON.stringify({ 'hotel_id': id }),
+      dataType: "json",
+      success: function(resp) {
+        $("[id='avail "+id+"']").replaceWith(resp.available);
+      }
+    })
+}
+
+</script>
 {% if form or error_message %}
 <div class="container-fluid">
     <div class="row">
@@ -36,11 +91,41 @@
                 <div class="col-sm-12 col-md-6">
                     <div class="panel panel-default">
                         <div class="panel-body">
-                            {{ hotel.company_id }}
+                            {{ hotel.company_id_id }}
                             Cost: ${% multiply hotel.cost rooms_count %}
                             {{ hotel.city }}
-                            {{ hotel.state }}
-                            <button type="button" class="btn btn-primary">Purchase</button>
+                            <div class="panel panel-default">
+                                <div class="panel-body">
+                                    <h4>Amenities</h4>
+                                    {% if hotel.breakfast == 1 %}
+                                    Breakfast
+                                    {% endif %}
+                                    {% if hotel.parking == 1 %}
+                                    Parking
+                                    {% endif %}
+                                    {% if hotel.fitness == 1 %}
+                                    Gym
+                                    {% endif %}
+                                    {% if hotel.pool == 1 %}
+                                    Pool
+                                    {% endif %}
+                                    {% if hotel.bar == 1 %}
+                                    Bar
+                                    {% endif %}
+                                    {% if hotel.wifi == 1 %}
+                                    Wifi
+                                    {% endif %}
+                                </div>
+                            </div>
+                            Available: <span id="avail {{ hotel.hotel_id }}">{{ hotel.available }}</span>
+                            <button type="button" class="btn btn-primary" onclick="select({{ hotel.hotel_id }})">Select</button>
+                            <div class="panel-body {{ hotel.hotel_id }}" style="display: none;">
+                                <form>
+                                    CC Number <input name="cc_num" type="text">
+                                    Security Code <input name="security_code" type="text">
+                                    <button type="button" class="btn btn-primary" onclick="purchase({{hotel.hotel_id}})">Purchase</button>
+                                </form>
+                            </div>
                         </div>
                     </div>
                 </div>

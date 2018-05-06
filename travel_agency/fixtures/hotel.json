@@ -3,8 +3,8 @@
     "model": "travel_agency.Hotel", 
     "pk": 1,
     "fields": {
-      "company_id_id" : 7,
-      "addr_id_id" : 1,
+      "company" : 7,
+      "addr" : 1,
       "cost" : 159,
       "available" : 25,
       "from_date" : "2018-04-20 17:30",
@@ -16,8 +16,8 @@
     "model": "travel_agency.Hotel", 
     "pk": 2,
     "fields": {
-      "company_id_id" : 8,
-      "addr_id_id" : 2,
+      "company" : 8,
+      "addr" : 2,
       "cost" : 76,
       "available" : 10,
       "from_date" : "2018-04-20 17:30",

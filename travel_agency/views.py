@@ -167,8 +167,17 @@ def hotels(request):
 def select(request):
     if request.method == 'POST':
         data = json.loads(request.body)
-        flight = Flight.get_flight(data['flight_id'])
-        return HttpResponse(json.dumps({'flight_id': flight[0]['flight_id']}), content_type='application/json')
+        context = {}
+        if 'flight_id' in data:
+            flight = Flight.get_flight(data['flight_id'])
+            context = {'flight_id': flight[0]['flight_id']}
+        elif 'car_id' in data:
+            car = Car.get_car(data['car_id'])
+            context = {'car_id': flight[0]['car_id']}
+        elif 'hotel_id' in data:
+            hotel = Hotel.get_hotel(data['hotel_id'])
+            context = {'hotel_id': hotel[0]['hotel_id']}
+        return HttpResponse(json.dumps(context), content_type='application/json')
 
 def purchase(request):
     if request.method == 'POST':
@@ -186,6 +195,12 @@ def purchase(request):
                 Orders.add_order(request.user, 'car', data['car_id'], 1)
             car = Car.get_car(data['car_id'])
             context = {'available': car[0]['available']}
+        elif 'hotel_id' in data and data['hotel_id'] is not None:
+            Hotel.purchase(data['hotel_id'])
+            if request.user.is_authenticated:
+                Orders.add_order(request.user, 'hotel', data['hotel_id'], 1)
+            hotel = Hotel.get_hotel(data['hotel_id'])
+            context = {'available': hotel[0]['available']}
         return HttpResponse(json.dumps(context), content_type='application/json')
 
 def orders(request):

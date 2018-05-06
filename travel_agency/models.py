@@ -91,9 +91,10 @@ class Flight(models.Model):
                 )
                 WHERE   city=%s AND
                         available >= %s AND
-                        from_date LIKE %s AND
-                        to_location_id = (SELECT location_id FROM travel_agency_location WHERE city = %s) 
+                        from_date LIKE %s 
             '''
+            if to_location is not '':
+                query += 'AND to_location_id = (SELECT location_id FROM travel_agency_location WHERE city = \''+to_location + '\')'
             if int(price) == 1:
                 query += " ORDER BY cost "
             elif int(price) == 2:
@@ -108,8 +109,8 @@ class Flight(models.Model):
                     query += " ORDER BY to_date-from_date DESC "
                 else:
                     query += ", to_date-from_date DESC"
-
-            cursor.execute(query, (from_location, travelers_count, date+'%', to_location))
+            print(query)
+            cursor.execute(query, (from_location, travelers_count, date+'%'))
             results = [dict((cursor.description[i][0], value) \
                for i, value in enumerate(row)) for row in cursor.fetchall()]
         finally:
@@ -315,6 +316,58 @@ class Hotel(models.Model):
     to_date = models.DateTimeField(default=datetime.now)
     amenities = models.OneToOneField(Amenities, on_delete="CASCADE")
 
+    def search(location, rooms_count, from_date, to_date):
+        cursor = connection.cursor()
+        try:
+            cursor.execute('''
+                SELECT company_id, from_date, to_date, city, cost, available, hotel_id, breakfast, parking, fitness, pool, bar, wifi
+                FROM (
+                    SELECT *
+                    FROM travel_agency_hotel
+                    INNER JOIN travel_agency_address ON travel_agency_hotel.addr_id=travel_agency_address.address_id
+                    INNER JOIN travel_agency_company ON travel_agency_hotel.company_id=travel_agency_company.company_id
+                    INNER JOIN travel_agency_amenities ON travel_agency_hotel.amenities_id=travel_agency_amenities.amenities_id
+                )
+                WHERE   city=%s AND
+                        available >= %s AND
+                        from_date <= %s AND
+                        to_date >= %s
+            ''', (location, rooms_count, from_date, to_date))
+            results = [dict((cursor.description[i][0], value) \
+               for i, value in enumerate(row)) for row in cursor.fetchall()]
+        finally:
+            connection.close()
+
+        return results
+
+    def get_hotel(hotel_id):
+        cursor = connection.cursor()
+        try:
+            query = '''
+                SELECT * 
+                FROM travel_agency_hotel
+                WHERE travel_agency_hotel.hotel_id = %s
+            '''
+            cursor.execute(query, (hotel_id,))
+            results = [dict((cursor.description[i][0], value) \
+               for i, value in enumerate(row)) for row in cursor.fetchall()]
+        finally:
+            connection.close()
+
+        return results
+
+    def purchase(hotel_id):
+        cursor = connection.cursor()
+        try:
+            query = '''
+                UPDATE travel_agency_hotel
+                SET available=available-1
+                WHERE hotel_id=%s
+            '''
+            cursor.execute(query, (hotel_id,))
+        finally:
+            connection.close()
+
 class Review(models.Model):
     review_id = models.IntegerField(primary_key=True)
     company_id = models.ForeignKey(Company, on_delete="DO_NOTHING")
@@ -372,6 +425,23 @@ class Orders(models.Model):
                 WHERE user_id_id = 
                 (SELECT id FROM auth_user WHERE username=%s)
                 AND order_type = 'car'
+            '''
+            cursor.execute(query, (str(user),))
+            results += [dict((cursor.description[i][0], value) \
+               for i, value in enumerate(row)) for row in cursor.fetchall()]
+
+            query = '''
+                SELECT *
+                FROM travel_agency_hotel
+                INNER JOIN travel_agency_orders ON
+                travel_agency_hotel.hotel_id = travel_agency_orders.order_type_id
+                INNER JOIN travel_agency_company ON 
+                travel_agency_hotel.company_id=travel_agency_company.company_id
+                INNER JOIN travel_agency_address ON
+                travel_agency_hotel.addr_id=travel_agency_address.address_id
+                WHERE user_id_id = 
+                (SELECT id FROM auth_user WHERE username=%s)
+                AND order_type = 'hotel'
             '''
             cursor.execute(query, (str(user),))
             results += [dict((cursor.description[i][0], value) \

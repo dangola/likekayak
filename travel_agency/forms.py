@@ -16,7 +16,7 @@ class UserForm(forms.ModelForm):
 
 class SearchForm(forms.ModelForm):
     from_location = forms.CharField(widget=forms.TextInput())
-    to_location = forms.CharField(widget=forms.TextInput())
+    to_location = forms.CharField(widget=forms.TextInput(), required=False)
     travelers_count = forms.IntegerField(widget=forms.NumberInput())
     round_trip = forms.BooleanField(widget=forms.CheckboxInput(), required=False)
     price_choices = (
