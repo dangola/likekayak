@@ -68,19 +68,26 @@ def flights(request):
             non_stop = request.POST.get('non_stop', False) == 'on'
             one_stop = request.POST.get('one_stop', False) == 'on'
 
+            if not non_stop and not one_stop:
+                non_stop = True
+
             if non_stop:
                 context['non_stop_departure_flights'] = Flight.search(from_location, to_location, from_date, travelers_count, price, time)
             if one_stop:
                 context['one_stop_departure_flights'] = Flight.search_one_stop(from_location, to_location, from_date, travelers_count, price, time)
             context['to_location'] = to_location
             context['travelers_count'] = travelers_count
-
             if round_trip:
-                context['return_flights'] = Flight.search(to_location, from_location, to_date, travelers_count, price, time)
+                if non_stop:
+                    context['non_stop_return_flights'] = Flight.search(to_location, from_location, to_date, travelers_count, price, time)
+                if one_stop:
+                    context['one_stop_return_flights'] = Flight.search_one_stop(to_location, from_location, to_date, travelers_count, price, time)
                 context['return_to_location'] = from_location
+            print(non_stop, one_stop)
+            print(context)
             if 'non_stop_departure_flights' in context or 'one_stop_departure_flights' in context:
-                if round_trip and not context['return_flights']:
-                    return render(request, 'travel_agency/flights.html', {'error_message': 'Oops! We don\'t have any flights for that.'})  
+                if round_trip and (non_stop and context['non_stop_return_flights'] == []) and (one_stop and context['one_stop_return_flights'] == []):
+                        return render(request, 'travel_agency/flights.html', {'error_message': 'Oops! We don\'t have any flights for that.'})  
                 else:
                     return render(request, 'travel_agency/flights.html', context)
             else:
@@ -244,7 +251,6 @@ def review_company(request, company_name):
     context = {
         'reviews': Review.get_reviews(company_name)
     }
-    print(context['reviews'])
     if context['reviews']:
         return render(request, 'travel_agency/reviews.html', context)
     else:

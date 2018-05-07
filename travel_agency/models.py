@@ -119,7 +119,6 @@ class Flight(models.Model):
                     query += " ORDER BY to_date-from_date DESC "
                 else:
                     query += ", to_date-from_date DESC"
-            print(query)
             cursor.execute(query, (from_location, travelers_count, date+'%'))
             results = [dict((cursor.description[i][0], value) \
                for i, value in enumerate(row)) for row in cursor.fetchall()]
@@ -173,9 +172,9 @@ class Flight(models.Model):
                     query += ", a.to_date-a.from_date DESC, b.to_date-b.from_date DESC"
 
             cursor.execute(query, (from_location, to_location, travelers_count, travelers_count, date+'%'))
-            results = [dict((cursor.description[i][0], value) \
+            descriptions = ('a_flight_id', 'a_city', 'a_name', 'a_cost', 'a_available', 'a_flight_class', 'b_flight_id', 'b_city', 'b_name', 'b_cost', 'b_available', 'b_flight_class')
+            results = [dict((descriptions[i], value) \
                for i, value in enumerate(row)) for row in cursor.fetchall()]
-            print(results)
         finally:
             connection.close()
 
@@ -255,7 +254,6 @@ class Car(models.Model):
                 ) 
             '''
             if int(price) == 1:
-                print(price)
                 query += " ORDER BY cost "
             elif int(price) == 2:
                 query += " ORDER BY cost DESC "
@@ -407,7 +405,7 @@ class Hotel(models.Model):
                 query += 'AND parking = 1'
             if gym:
                 query += 'AND gym = 1'
-                
+
             cursor.execute(query, (location, rooms_count, from_date, to_date))
             results = [dict((cursor.description[i][0], value) \
                for i, value in enumerate(row)) for row in cursor.fetchall()]
