@@ -315,7 +315,8 @@ class Cruise(models.Model):
             query = '''
                 SELECT *
                 FROM (
-                    SELECT name, from_date, to_date, a.city as from_city, a.country as from_country, b.city as to_city, b.country as to_country, cost, available, cruise_id
+                    SELECT  name, from_date, to_date, a.city as from_city, a.country as from_country, 
+                            b.city as to_city, b.country as to_country, cost, available, cruise_id
                     FROM travel_agency_cruise
                     INNER JOIN travel_agency_location a ON travel_agency_cruise.from_location_id=a.location_id
                     INNER JOIN travel_agency_location b ON travel_agency_cruise.to_location_id=b.location_id
