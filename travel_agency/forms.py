@@ -60,11 +60,6 @@ class CarSearchForm(forms.Form):
     )
     price = forms.ChoiceField(choices=price_choices, required=False)
    
-class SettingsForm(forms.ModelForm):
-    class Meta:
-        model = Profile
-        fields = ['first_name', 'last_name', 'home_addr', 'billing_addr', 'payment_method', 'email']
-
 class HotelsForm(forms.ModelForm):
     location = forms.CharField(widget=forms.TextInput())
     rooms_count = forms.IntegerField(widget=forms.NumberInput())
