@@ -52,7 +52,7 @@ class CarSearchForm(forms.Form):
     to_date =  forms.DateField(widget=DateInput())
     pickup_location = forms.CharField(widget=forms.TextInput())
     dropoff_location = forms.CharField(widget=forms.TextInput())
-    same_drop_off = forms.BooleanField(widget=forms.CheckboxInput(), required=False)
+    same_pickup = forms.BooleanField(widget=forms.CheckboxInput(), required=False)
     price_choices = (
         (0, _("None")),
         (1, _("$->$$$")),

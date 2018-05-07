@@ -109,9 +109,10 @@ def cars(request):
             pickup_location = request.POST['pickup_location']
             dropoff_location = request.POST['dropoff_location']
             price = request.POST.get('price')
+            same_pickup = request.POST.get('same_pickup', False) == 'on'
 
             context = { 
-                'cars': Car.search(pickup_location, dropoff_location, from_date, to_date, price),
+                'cars': Car.search(pickup_location, dropoff_location, from_date, to_date, price, same_pickup),
                 'pickup_location': pickup_location,
                 'dropoff_location': dropoff_location
             }

@@ -230,7 +230,7 @@ class Car(models.Model):
     confirmation_id = models.IntegerField()
     car_class = models.CharField(max_length=10, choices=CLASS_CHOICES)
 
-    def search(pickup_location, dropoff_location, from_date, to_date, price):
+    def search(pickup_location, dropoff_location, from_date, to_date, price, same_pickup):
         cursor = connection.cursor()
         try:
             query = '''
@@ -257,8 +257,12 @@ class Car(models.Model):
                 query += " ORDER BY cost "
             elif int(price) == 2:
                 query += " ORDER BY cost DESC "
+            print(pickup_location)
+            if same_pickup:
+                cursor.execute(query, (pickup_location, from_date+'%', to_date, pickup_location))
+            else:
+                cursor.execute(query, (pickup_location, from_date+'%', to_date, dropoff_location))
 
-            cursor.execute(query, (pickup_location, from_date+'%', to_date, dropoff_location))
             results = [dict((cursor.description[i][0], value) \
                for i, value in enumerate(row)) for row in cursor.fetchall()]
         finally:
