@@ -1,0 +1,115 @@
+{% extends 'travel_agency/base.html' %}
+{% load multiply %}
+{% block title %}Cruises{% endblock %}
+
+{% block body %}
+<script type="text/javascript">
+
+function getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie != '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = jQuery.trim(cookies[i]);
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+var csrftoken = getCookie('csrftoken');
+function csrfSafeMethod(method) {
+    // these HTTP methods do not require CSRF protection
+    return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+}
+$.ajaxSetup({
+    beforeSend: function(xhr, settings) {
+        if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+        }
+    }
+});
+function select(id) {
+    console.log("some string")
+    $.ajax({
+      url: '{% url "select" %}',
+      type: 'POST',
+      contentType: 'application/json',
+      data: JSON.stringify({ 'cruise_id': id }),
+      dataType: "json",
+      success: function(resp) {
+        $("div.panel-body."+resp.cruise_id).toggle();
+      }
+    })
+}
+function purchase(id) {
+    $.ajax({
+      url: '{% url "purchase" %}',
+      type: 'POST',
+      contentType: 'application/json',
+      data: JSON.stringify({ 'cruise_id': id }),
+      dataType: "json",
+      success: function(resp) {
+        $("[id='avail "+id+"']").replaceWith(resp.available);
+      }
+    })
+}
+
+</script>
+{% if form or error_message %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-12 col-md-6">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <h3>Seach for your vacation</h3>
+                    {% if error_message %}
+                        <p><strong>{{ error_message }}</strong></p>
+                        <a href="{% url 'cruises' %}" class="btn btn-primary">Try Another Search</a>
+                    {% else %}
+                    <form class="form-horizontal" role="form" action="" method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        {% include 'travel_agency/form_template.html' %}
+                        <div class="form-group">
+                            <div class="col-sm-offset-2 col-sm-10">
+                                <button type="submit" class="btn btn-success">Search</button>
+                            </div>
+                        </div>
+                    </form>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% else %}
+    {% for cruise in available_cruises %}
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-sm-12 col-md-6">
+                    <div class="panel panel-default">
+                        <div class="panel-body">
+                            {{ cruise.name }}
+                            Cost: ${% multiply cruise.cost travelers_count %}
+                            {{ cruise.city }}
+                            {{ cruise.country }}
+                            Available: <span id="avail {{ cruise.cruise_id }}">{{ cruise.available }}</span>
+                            <button type="button" class="btn btn-primary" onclick="select({{ cruise.cruise_id }})">Select</button>
+                            <div class="panel-body {{ cruise.cruise_id }}" style="display: none;">
+                                <form>
+                                    CC Number <input name="cc_num" type="text">
+                                    Security Code <input name="security_code" type="text">
+                                    <button type="button" class="btn btn-primary" onclick="purchase({{cruise.cruise_id}})">Purchase</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+{% endif %}
+{% endblock %}

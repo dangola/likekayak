@@ -19,4 +19,5 @@ urlpatterns = [
     url(r'^select/', views.select, name='select'),
     url(r'^settings/', views.settings, name='settings'),
     url(r'^hotels/', views.hotels, name='hotels'),
+    url(r'^cruises/', views.cruises, name='cruises'),
 ]

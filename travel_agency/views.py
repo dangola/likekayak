@@ -181,6 +181,9 @@ def select(request):
         elif 'hotel_id' in data:
             hotel = Hotel.get_hotel(data['hotel_id'])
             context = {'hotel_id': hotel[0]['hotel_id']}
+        elif 'cruise_id' in data:
+            cruise = Cruise.get_cruise(data['cruise_id'])
+            context = {'cruise_id': cruise[0]['cruise_id']}
         return HttpResponse(json.dumps(context), content_type='application/json')
 
 def purchase(request):
@@ -205,6 +208,12 @@ def purchase(request):
                 Orders.add_order(request.user, 'hotel', data['hotel_id'], 1)
             hotel = Hotel.get_hotel(data['hotel_id'])
             context = {'available': hotel[0]['available']}
+        elif 'cruise_id' in data and data['cruise_id'] is not None:
+            Cruise.purchase(data['cruise_id'])
+            if request.user.is_authenticated:
+                Orders.add_order(request.user, 'cruise', data['cruise_id'], 1)
+            cruise = Cruise.get_cruise(data['cruise_id'])
+            context = {'available': cruise[0]['available']}
         return HttpResponse(json.dumps(context), content_type='application/json')
 
 def orders(request):
@@ -240,3 +249,30 @@ def review_company(request, company_name):
         return render(request, 'travel_agency/reviews.html', context)
     else:
         return render(request, 'travel_agency/reviews.html', {'error_message': 'Sorry! This company has no reviews!'})
+
+def cruises(request):
+    form = CruiseSearchForm(request.POST or None)
+    if request.method == 'POST':
+        if form.is_valid():
+            from_location = request.POST['from_location']
+            to_location = request.POST['to_location']
+            travelers_count = request.POST['travelers_count']
+            from_date = request.POST['from_date']
+            to_date = request.POST['to_date']
+            context = {
+                'available_cruises': Cruise.search(from_location, to_location, travelers_count, from_date, to_date),
+                'from_location': from_location,
+                'to_location': to_location,
+                'travelers_count': travelers_count
+            }
+            if context['available_cruises']:
+                return render(request, 'travel_agency/cruises.html', context)
+            else:
+                return render(request, 'travel_agency/cruises.html', {'error_message': 'Oops! We don\'t have any rooms available for that.'})
+        else:
+            return render(request, 'travel_agency/cruises.html', {'error_message': form.errors.as_text})
+    
+    context = {
+        'form': form,
+    }
+    return render(request, 'travel_agency/cruises.html', context)

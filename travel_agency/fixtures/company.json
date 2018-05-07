@@ -54,5 +54,19 @@
     "fields": {
       "name": "days hotel by wyndham boulder, boulder"
     }
+  },
+  {
+    "model": "travel_agency.Company",
+    "pk": 9,
+    "fields": {
+      "name": "carnival"
+    }
+  },
+  {
+    "model": "travel_agency.Company",
+    "pk": 10,
+    "fields": {
+      "name": "norwegian cruise line"
+    }
   }
 ]

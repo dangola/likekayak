@@ -94,3 +94,16 @@ class ReviewForm(forms.ModelForm):
         widgets = {
           'content': forms.Textarea(attrs={'rows':10, 'cols':70}),
         }
+
+class CruiseSearchForm(forms.ModelForm):
+    from_location = forms.CharField(widget=forms.TextInput())
+    to_location = forms.CharField(widget=forms.TextInput(), required=False)
+    travelers_count = forms.IntegerField(widget=forms.NumberInput())
+    class Meta:
+        model = Cruise
+        fields = ['from_date', 'to_date']
+        widgets = {
+            'from_date': DateInput(),
+            'to_date': DateInput()
+        }
+

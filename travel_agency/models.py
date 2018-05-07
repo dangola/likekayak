@@ -307,6 +307,58 @@ class Cruise(models.Model):
     to_date = models.DateTimeField(default=datetime.now)
     cruise_id = models.IntegerField(primary_key=True)
 
+    def search(from_location, to_location, travelers_count, from_date, to_date):
+        cursor = connection.cursor()
+        try:
+            cursor.execute('''
+                SELECT name, from_date, to_date, city, country, cost, available, cruise_id
+                FROM (
+                    SELECT *
+                    FROM travel_agency_cruise
+                    INNER JOIN travel_agency_location ON travel_agency_cruise.from_location_id=travel_agency_location.location_id
+                    INNER JOIN travel_agency_company ON travel_agency_cruise.company_id=travel_agency_company.company_id
+                )
+                WHERE   city=%s AND
+                        available >= %s AND
+                        from_date LIKE %s AND
+                        to_date LIKE %s
+            ''', (from_location, travelers_count, from_date+'%', to_date+'%'))
+            results = [dict((cursor.description[i][0], value) \
+               for i, value in enumerate(row)) for row in cursor.fetchall()]
+        finally:
+            connection.close()
+
+        return results
+
+    def get_cruise(cruise_id):
+        cursor = connection.cursor()
+        try:
+            query = '''
+                SELECT * 
+                FROM travel_agency_cruise
+                WHERE travel_agency_cruise.cruise_id = %s
+            '''
+            cursor.execute(query, (cruise_id,))
+            results = [dict((cursor.description[i][0], value) \
+               for i, value in enumerate(row)) for row in cursor.fetchall()]
+        finally:
+            connection.close()
+
+        return results
+
+    def purchase(cruise_id):
+        cursor = connection.cursor()
+        try:
+            query = '''
+                UPDATE travel_agency_cruise
+                SET available=available-1
+                WHERE cruise_id=%s
+            '''
+            cursor.execute(query, (cruise_id,))
+        finally:
+            connection.close()
+
+
 class Amenities(models.Model):
     amenities_id = models.IntegerField(primary_key=True)
     breakfast = models.BooleanField(default=False)
@@ -484,6 +536,25 @@ class Orders(models.Model):
                 WHERE user_id_id = 
                 (SELECT id FROM auth_user WHERE username=%s)
                 AND order_type = 'hotel'
+            '''
+            cursor.execute(query, (str(user),))
+            results += [dict((cursor.description[i][0], value) \
+               for i, value in enumerate(row)) for row in cursor.fetchall()]
+
+            query = '''
+                SELECT cost, from_date, to_date, name, a.city as from_city, b.city as to_city, travelers_count
+                FROM travel_agency_cruise
+                INNER JOIN travel_agency_orders ON
+                travel_agency_cruise.cruise_id = travel_agency_orders.order_type_id
+                INNER JOIN travel_agency_company ON 
+                travel_agency_cruise.company_id=travel_agency_company.company_id
+                INNER JOIN travel_agency_location a ON
+                travel_agency_cruise.from_location_id=a.location_id
+                INNER JOIN travel_agency_location b ON
+                travel_agency_cruise.to_location_id=b.location_id
+                WHERE user_id_id = 
+                (SELECT id FROM auth_user WHERE username=%s)
+                AND order_type = 'cruise'
             '''
             cursor.execute(query, (str(user),))
             results += [dict((cursor.description[i][0], value) \

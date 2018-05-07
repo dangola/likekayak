@@ -61,5 +61,23 @@
       "state": "colorado",
       "country": "united states of america"
     }
+  },
+  {
+    "model": "travel_agency.Location", 
+    "pk": 8,
+    "fields": {
+      "city": "nassau",
+      "state": "new province",
+      "country": "bahamas"
+    }
+  },
+  {
+    "model": "travel_agency.Location", 
+    "pk": 9,
+    "fields": {
+      "city": "king's wharf",
+      "state": "unicorn's barf",
+      "country": "bermuda"
+    }
   }
 ]

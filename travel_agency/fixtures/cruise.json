@@ -1,0 +1,30 @@
+[
+  {
+    "model": "travel_agency.Cruise",
+    "pk": 0,
+    "fields": {
+      "number": 12345,
+      "company": 9,
+      "from_location": 1,
+      "to_location": 8,
+      "cost": 692,
+      "available": 75,
+      "from_date": "2018-05-20 17:30",
+      "to_date": "2018-05-29 08:48"
+    }
+  },
+  {
+    "model": "travel_agency.Cruise",
+    "pk": 1,
+    "fields": {
+      "number": 67890,
+      "company": 10,
+      "from_location": 1,
+      "to_location": 9,
+      "cost": 749,
+      "available": 100,
+      "from_date": "2018-05-20 17:30",
+      "to_date": "2018-05-29 08:48"
+    }
+  }
+]
