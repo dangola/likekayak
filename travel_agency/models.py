@@ -312,19 +312,23 @@ class Cruise(models.Model):
     def search(from_location, to_location, travelers_count, from_date, to_date):
         cursor = connection.cursor()
         try:
-            cursor.execute('''
-                SELECT name, from_date, to_date, city, country, cost, available, cruise_id
+            query = '''
+                SELECT *
                 FROM (
-                    SELECT *
+                    SELECT name, from_date, to_date, a.city as from_city, a.country as from_country, b.city as to_city, b.country as to_country, cost, available, cruise_id
                     FROM travel_agency_cruise
-                    INNER JOIN travel_agency_location ON travel_agency_cruise.from_location_id=travel_agency_location.location_id
+                    INNER JOIN travel_agency_location a ON travel_agency_cruise.from_location_id=a.location_id
+                    INNER JOIN travel_agency_location b ON travel_agency_cruise.to_location_id=b.location_id
                     INNER JOIN travel_agency_company ON travel_agency_cruise.company_id=travel_agency_company.company_id
                 )
-                WHERE   city=%s AND
+                WHERE   from_city=%s AND
                         available >= %s AND
                         from_date LIKE %s AND
                         to_date LIKE %s
-            ''', (from_location, travelers_count, from_date+'%', to_date+'%'))
+            '''
+            if to_location is not '':
+                query += 'AND to_country = \''+to_location + '\''
+            cursor.execute(query, (from_location, travelers_count, from_date+'%', to_date+'%'))
             results = [dict((cursor.description[i][0], value) \
                for i, value in enumerate(row)) for row in cursor.fetchall()]
         finally:
@@ -384,7 +388,7 @@ class Hotel(models.Model):
         cursor = connection.cursor()
         try:
             query = '''
-                SELECT name, from_date, to_date, city, cost, available, hotel_id, breakfast, parking, fitness, pool, bar, wifi
+                SELECT name, from_date, to_date, city, state, cost, available, hotel_id, breakfast, parking, fitness, pool, bar, wifi
                 FROM (
                     SELECT *
                     FROM travel_agency_hotel

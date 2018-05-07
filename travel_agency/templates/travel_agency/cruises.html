@@ -33,7 +33,6 @@ $.ajaxSetup({
     }
 });
 function select(id) {
-    console.log("some string")
     $.ajax({
       url: '{% url "select" %}',
       type: 'POST',
@@ -65,7 +64,7 @@ function purchase(id) {
         <div class="col-sm-12 col-md-6">
             <div class="panel panel-default">
                 <div class="panel-body">
-                    <h3>Seach for your vacation</h3>
+                    <h3>Seach for your cruise</h3>
                     {% if error_message %}
                         <p><strong>{{ error_message }}</strong></p>
                         <a href="{% url 'cruises' %}" class="btn btn-primary">Try Another Search</a>
@@ -86,17 +85,19 @@ function purchase(id) {
     </div>
 </div>
 {% else %}
+    <div class="container-fluid">
+        <h2>Available Cruises</h2>
+    </div>
     {% for cruise in available_cruises %}
         <div class="container-fluid">
             <div class="row">
                 <div class="col-sm-12 col-md-6">
                     <div class="panel panel-default">
                         <div class="panel-body">
-                            {{ cruise.name }}
-                            Cost: ${% multiply cruise.cost travelers_count %}
-                            {{ cruise.city }}
-                            {{ cruise.country }}
-                            Available: <span id="avail {{ cruise.cruise_id }}">{{ cruise.available }}</span>
+                            <h3><a href="{% url 'review_company' company_name=cruise.name %}">{{ cruise.name }}</a></h3><br>
+                            Cost: ${% multiply cruise.cost travelers_count %} for {{ travelers_count }} person(s)<br>
+                            {{ cruise.from_city }}&rarr;{{ cruise.to_city }}, {{ cruise.to_country }}<br><br>
+                            Available: <span id="avail {{ cruise.cruise_id }}">{{ cruise.available }}</span><br><br>
                             <button type="button" class="btn btn-primary" onclick="select({{ cruise.cruise_id }})">Select</button>
                             <div class="panel-body {{ cruise.cruise_id }}" style="display: none;">
                                 <form>
@@ -111,5 +112,12 @@ function purchase(id) {
             </div>
         </div>
     {% endfor %}
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-12 col-md-6">
+                <a href="{% url 'cruises' %}" class="btn btn-success">Return to searches</a><br><br>
+            </div>
+        </div>
+    </div>
 {% endif %}
 {% endblock %}

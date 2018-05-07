@@ -64,7 +64,7 @@ function purchase(id) {
         <div class="col-sm-12 col-md-6">
             <div class="panel panel-default">
                 <div class="panel-body">
-                    <h3>Seach for a hotel</h3>
+                    <h3>Seach for your hotel</h3>
                     {% if error_message %}
                         <p><strong>{{ error_message }}</strong></p>
                         <a href="{% url 'hotels' %}" class="btn btn-primary">Try Another Search</a>
@@ -85,39 +85,38 @@ function purchase(id) {
     </div>
 </div>
 {% else %}
+    <div class="container-fluid">
+        <h2>Available Hotels</h2>
+    </div>
     {% for hotel in available_hotels %}
         <div class="container-fluid">
             <div class="row">
                 <div class="col-sm-12 col-md-6">
                     <div class="panel panel-default">
                         <div class="panel-body">
-                            <a href="{% url 'review_company' company_name=hotel.name %}">{{ hotel.name }}</a>
-                            Cost: ${% multiply hotel.cost rooms_count %}
-                            {{ hotel.city }}
-                            <div class="panel panel-default">
-                                <div class="panel-body">
-                                    <h4>Amenities</h4>
-                                    {% if hotel.breakfast == 1 %}
-                                    Breakfast
-                                    {% endif %}
-                                    {% if hotel.parking == 1 %}
-                                    Parking
-                                    {% endif %}
-                                    {% if hotel.fitness == 1 %}
-                                    Gym
-                                    {% endif %}
-                                    {% if hotel.pool == 1 %}
-                                    Pool
-                                    {% endif %}
-                                    {% if hotel.bar == 1 %}
-                                    Bar
-                                    {% endif %}
-                                    {% if hotel.wifi == 1 %}
-                                    Wifi
-                                    {% endif %}
-                                </div>
-                            </div>
-                            Available: <span id="avail {{ hotel.hotel_id }}">{{ hotel.available }}</span>
+                            <h3><a href="{% url 'review_company' company_name=hotel.name %}">{{ hotel.name }}</a><br></h3>
+                            Cost: ${% multiply hotel.cost rooms_count %} for {{ rooms_count }} room(s)<br>
+                            {{ hotel.city }}, {{ hotel.state }}<br>
+                                <h4>Amenities</h4>
+                                {% if hotel.breakfast == 1 %}
+                                - Breakfast <br>
+                                {% endif %}
+                                {% if hotel.parking == 1 %}
+                                - Parking <br>
+                                {% endif %}
+                                {% if hotel.fitness == 1 %}
+                                - Gym <br>
+                                {% endif %}
+                                {% if hotel.pool == 1 %}
+                                - Pool <br>
+                                {% endif %}
+                                {% if hotel.bar == 1 %}
+                                - Bar <br>
+                                {% endif %}
+                                {% if hotel.wifi == 1 %}
+                                - Wifi <br>
+                                {% endif %}<br>
+                            Available: <span id="avail {{ hotel.hotel_id }}">{{ hotel.available }}</span><br>
                             <button type="button" class="btn btn-primary" onclick="select({{ hotel.hotel_id }})">Select</button>
                             <div class="panel-body {{ hotel.hotel_id }}" style="display: none;">
                                 <form>
@@ -132,5 +131,12 @@ function purchase(id) {
             </div>
         </div>
     {% endfor %}
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-12 col-md-6">
+                <a href="{% url 'hotels' %}" class="btn btn-success">Return to searches</a><br><br>
+            </div>
+        </div>
+    </div>
 {% endif %}
 {% endblock %}

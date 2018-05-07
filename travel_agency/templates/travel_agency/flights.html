@@ -90,7 +90,7 @@ function purchase(id, travelers_count) {
 {% else %}
 <div class="flights">
     <div class="container-fluid">
-        <h3>Departure Flights</h3>
+        <h2>Departure Flights</h2>
     </div>
     {% if non_stop_departure_flights %}
     {% for flight in non_stop_departure_flights %}
@@ -99,12 +99,12 @@ function purchase(id, travelers_count) {
                 <div class="col-sm-12 col-md-6">
                     <div class="panel panel-default">
                         <div class="panel-body">
-                            <a href="{% url 'review_company' company_name=flight.name %}">{{ flight.name }}</a>
-                            Cost: ${% multiply flight.cost travelers_count %}
-                            {{ flight.flight_class }}
-                            {{ flight.city }}&rarr;{{ to_location }}
-                            {{ flight.from_date }}
-                            Available: <span id="avail {{flight.flight_id}}">{{ flight.available }}</span>
+                            <h3><a href="{% url 'review_company' company_name=flight.name %}">{{ flight.name }}</a></h3><br>
+                            Cost: ${% multiply flight.cost travelers_count %} for {{ travelers_count }} person(s)<br>
+                            {{ flight.flight_class }}<br>
+                            {{ flight.city }}&rarr;{{ to_location }}<br>
+                            {{ flight.from_date }}<br><br>
+                            Available: <span id="avail {{flight.flight_id}}">{{ flight.available }}</span><br><br>
                             <button type="button" class="btn btn-primary" onclick="select({{ flight.flight_id }})">Select</button>
                             <div class="panel-body {{ flight.flight_id }}" style="display: none;">
                                 <form>
@@ -128,12 +128,12 @@ function purchase(id, travelers_count) {
                     <div class="panel panel-default">
                         <div class="panel-body">
                             Flight 1 of 2 <br>
-                            <a href="{% url 'review_company' company_name=flight.a_name %}">{{ flight.a_name }}</a>
-                            Cost: ${% multiply flight.a_cost travelers_count %}
-                            {{ flight.a_flight_class }}
-                            {{ flight.a_city }}
-                            {{ flight.a_from_date }}
-                            Available: <span id="avail {{flight.a_flight_id}}">{{ flight.a_available }}</span>
+                            <h3><a href="{% url 'review_company' company_name=flight.a_name %}">{{ flight.a_name }}</a></h3><br>
+                            Cost: ${% multiply flight.a_cost travelers_count %} for {{ travelers_count }} person(s)<br>
+                            {{ flight.a_flight_class }}<br>
+                            {{ flight.a_city }}<br>
+                            {{ flight.a_from_date }}<br><br>
+                            Available: <span id="avail {{flight.a_flight_id}}">{{ flight.a_available }}</span><br>
                             <button type="button" class="btn btn-primary" onclick="select({{ flight.a_flight_id }})">Select</button>
                             <div class="panel-body {{ flight.a_flight_id }}" style="display: none;">
                                 <form>
@@ -145,12 +145,12 @@ function purchase(id, travelers_count) {
                         </div>
                         <div class="panel-body">
                             Flight 2 of 2 <br>
-                            <a href="{% url 'review_company' company_name=flight.b_name %}">{{ flight.b_name }}</a>
-                            Cost: ${% multiply flight.b_cost travelers_count %}
-                            {{ flight.b_flight_class }}
-                            {{ flight.b_city }}
-                            {{ flight.b_from_date }}
-                            Available: <span id="avail {{flight.b_flight_id}}">{{ flight.b_available }}</span>
+                            <h3><a href="{% url 'review_company' company_name=flight.b_name %}">{{ flight.b_name }}</a></h3><br>
+                            Cost: ${% multiply flight.b_cost travelers_count %} for {{ travelers_count }} person(s)<br>
+                            {{ flight.b_flight_class }}<br>
+                            {{ flight.b_city }}<br>
+                            {{ flight.b_from_date }}<br><br>
+                            Available: <span id="avail {{flight.b_flight_id}}">{{ flight.b_available }}</span><br><br>
                             <button type="button" class="btn btn-primary" onclick="select({{ flight.b_flight_id }})">Select</button>
                             <div class="panel-body {{ flight.b_flight_id }}" style="display: none;">
                                 <form>
@@ -168,7 +168,7 @@ function purchase(id, travelers_count) {
     {% endif %}
     {% if non_stop_return_flights != None or one_stop_return_flights != None %}            
     <div class="container-fluid">
-        <h3>Arrival Flights</h3>
+        <h2>Arrival Flights</h2>
     </div>
         {% if non_stop_return_flights %}
         {% for flight in non_stop_return_flights %}
@@ -177,12 +177,12 @@ function purchase(id, travelers_count) {
                     <div class="col-sm-12 col-md-6">
                         <div class="panel panel-default">
                             <div class="panel-body">
-                                <a href="{% url 'review_company' company_name=flight.name %}">{{ flight.name }}</a>
-                                Cost: ${% multiply flight.cost travelers_count %}
-                                {{ flight.flight_class }}
-                                {{ flight.city }}&rarr;{{ return_to_location }}
-                                {{ flight.from_date }}
-                                Available: <span id="avail {{flight.flight_id}}">{{ flight.available }}</span>
+                                <h3><a href="{% url 'review_company' company_name=flight.name %}">{{ flight.name }}</a></h3><br>
+                                Cost: ${% multiply flight.cost travelers_count %} for {{ travelers_count }} person(s)<br>
+                                {{ flight.flight_class }}<br>
+                                {{ flight.city }}&rarr;{{ return_to_location }}<br>
+                                {{ flight.from_date }}<br><br>
+                                Available: <span id="avail {{flight.flight_id}}">{{ flight.available }}</span><br><br>
                                 <button type="button" class="btn btn-primary float-right" onclick="select({{ flight.flight_id }})">Select</button>
                                 <div class="panel-body {{ flight.flight_id }}" style="display: none;">
                                     <form>
@@ -206,12 +206,12 @@ function purchase(id, travelers_count) {
                         <div class="panel panel-default">
                             <div class="panel-body">
                                 Flight 1 of 2 <br>
-                                <a href="{% url 'review_company' company_name=flight.a_name %}">{{ flight.a_name }}</a>
-                                Cost: ${% multiply flight.a_cost travelers_count %}
-                                {{ flight.a_flight_class }}
-                                {{ flight.a_city }}
-                                {{ flight.a_from_date }}
-                                Available: <span id="avail {{flight.a_flight_id}}">{{ flight.a_available }}</span>
+                                <h3><a href="{% url 'review_company' company_name=flight.a_name %}">{{ flight.a_name }}</a></h3><br>
+                                Cost: ${% multiply flight.a_cost travelers_count %} for {{ travelers_count }} person(s)<br>
+                                {{ flight.a_flight_class }}<br>
+                                {{ flight.a_city }}<br>
+                                {{ flight.a_from_date }}<br><br>
+                                Available: <span id="avail {{flight.a_flight_id}}">{{ flight.a_available }}</span><br><br>
                                 <button type="button" class="btn btn-primary" onclick="select({{ flight.a_flight_id }})">Select</button>
                                 <div class="panel-body {{ flight.a_flight_id }}" style="display: none;">
                                     <form>
@@ -223,12 +223,12 @@ function purchase(id, travelers_count) {
                             </div>
                             <div class="panel-body">
                                 Flight 2 of 2 <br>
-                                <a href="{% url 'review_company' company_name=flight.b_name %}">{{ flight.b_name }}</a>
-                                Cost: ${% multiply flight.b_cost travelers_count %}
-                                {{ flight.b_flight_class }}
-                                {{ flight.b_city }}
-                                {{ flight.b_from_date }}
-                                Available: <span id="avail {{flight.b_flight_id}}">{{ flight.b_available }}</span>
+                                <h3><a href="{% url 'review_company' company_name=flight.b_name %}">{{ flight.b_name }}</a></h3><br>
+                                Cost: ${% multiply flight.b_cost travelers_count %} for {{ travelers_count }} person(s)<br>
+                                {{ flight.b_flight_class }}<br>
+                                {{ flight.b_city }}<br>
+                                {{ flight.b_from_date }}<br><br>
+                                Available: <span id="avail {{flight.b_flight_id}}">{{ flight.b_available }}</span><br><br>
                                 <button type="button" class="btn btn-primary" onclick="select({{ flight.b_flight_id }})">Select</button>
                                 <div class="panel-body {{ flight.b_flight_id }}" style="display: none;">
                                     <form>
@@ -248,7 +248,7 @@ function purchase(id, travelers_count) {
     <div class="container-fluid">
         <div class="row">
             <div class="col-sm-12 col-md-6">
-                <a href="{% url 'flights' %}" class="btn btn-success">Return to searches</a>
+                <a href="{% url 'flights' %}" class="btn btn-success">Return to searches</a><br><br>
             </div>
         </div>
     </div>
